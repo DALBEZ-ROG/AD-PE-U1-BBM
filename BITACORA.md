@@ -14,3 +14,13 @@
   - La computadora de Dariem no tenía Python, solo el acceso directo de la Microsoft Store. Se instaló Python 3.12.10 con winget.
   - Al diseñar los nodos vimos que, si un nodo recibe y envía en el mismo hilo, dos nodos pueden quedarse esperando el acuse del otro. Se separó: el hilo que recibe responde el acuse de inmediato y los envíos siguientes los hace otro hilo.
   - La carpeta `src/grpc` tiene el mismo nombre que la librería `grpc`. Para que Python no las confunda, los nodos se ejecutan con `python -m` desde la raíz del repositorio.
+
+## Jueves 19 de noviembre de 2026
+
+- **Presentes:** Dariem Benites, Erwin Bueno y Elian Mendoza.
+- **Hipótesis, escrita antes de medir:**
+  - **Mensajes de 100 caracteres:** sockets tendrá menor latencia que gRPC y enviará más mensajes por segundo. En sockets cada envío es el JSON con 4 bytes de longitud sobre una conexión TCP que ya está abierta. En gRPC cada llamada también pasa por HTTP/2, por la codificación con Protocol Buffers y por el pool de hilos del servidor. Con un mensaje corto, ese trabajo fijo de cada llamada es casi todo el tiempo.
+  - **Mensajes de 10 000 caracteres:** las dos latencias subirán, porque hay más bytes que copiar y enviar. La diferencia relativa entre los dos mecanismos se achicará: con un mensaje grande pesa más el envío de los datos que el trabajo fijo de la llamada, y los dos formatos ocupan casi lo mismo, porque el texto pesa mucho más que las etiquetas del JSON o de Protocol Buffers.
+  - **Tres clientes a la vez (A → B, B → C y C → B):** la latencia de cada cliente subirá, porque los procesos compiten por la CPU y porque nodo-B recibe de A y de C al mismo tiempo. El total de mensajes por segundo de los tres será mayor que con un solo cliente, pero no el triple, porque nodo-B se vuelve el cuello de botella.
+- **Qué hicimos:**
+  - Se acordó la hipótesis entre los tres antes de correr el experimento oficial.
