@@ -1,0 +1,546 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[american,spanish,es-tabla]{babel}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{lmodern}
+\usepackage{csquotes}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{enumitem}
+\usepackage[font=small]{caption}
+\usepackage{listings}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta}
+\usepackage[backend=biber,style=ieee,autolang=other]{biblatex}
+\usepackage[hidelinks]{hyperref}
+\usepackage{xurl}
+\addbibresource{referencias.bib}
+\DeclareFieldFormat{sentencecase}{#1}
+
+\newcommand{\repourl}{https://github.com/DALBEZ-ROG/AD-PE-U1-BBM}
+\newcommand{\commit}[1]{\href{\repourl/commit/#1}{\texttt{\detokenize{#1}}}}
+\newcommand{\tablagenerada}[1]{\IfFileExists{../analysis/tablas/#1.tex}{\input{../analysis/tablas/#1.tex}}{\textit{Falta \texttt{analysis/tablas/\detokenize{#1}.tex}: primero hay que correr el análisis.}}}
+\newcommand{\figuragenerada}[2]{\IfFileExists{../analysis/figuras/#1.pdf}{\includegraphics[width=#2]{../analysis/figuras/#1.pdf}}{\textit{Falta \texttt{analysis/figuras/\detokenize{#1}.pdf}: primero hay que correr el análisis.}}}
+\setlength{\emergencystretch}{3em}
+
+\definecolor{codigo}{gray}{0.96}
+\lstset{
+  basicstyle=\ttfamily\footnotesize,
+  backgroundcolor=\color{codigo},
+  frame=single,
+  rulecolor=\color{gray!40},
+  columns=fullflexible,
+  keepspaces=true,
+  breaklines=true,
+  showstringspaces=false,
+  keywordstyle=\bfseries,
+  aboveskip=6pt,
+  belowskip=6pt,
+  literate={á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1 {ñ}{{\~n}}1
+           {Á}{{\'A}}1 {É}{{\'E}}1 {Í}{{\'I}}1 {Ó}{{\'O}}1 {Ú}{{\'U}}1 {Ñ}{{\~N}}1 {ü}{{\"u}}1
+}
+\lstdefinelanguage{proto}{
+  morekeywords={syntax,package,message,service,rpc,returns,string,int64,bool},
+  morecomment=[l]{//},
+  morestring=[b]"
+}
+
+\begin{document}
+
+\begin{titlepage}
+\begin{center}
+  {\Large\bfseries UNIVERSIDAD TÉCNICA ESTATAL DE QUEVEDO\par}
+  \vspace{4pt}
+  {\large Facultad de Ciencias de la Computación\par}
+  {\large Carrera de Software\par}
+  \vspace{1.6cm}
+  {\large\bfseries Aplicaciones Distribuidas (ISR-701)\par}
+  \vspace{0.8cm}
+  {\Large\bfseries GA-SUM-01 / PE-U1\par}
+  \vspace{4pt}
+  {\large Práctica Experimental de la Unidad 1\par}
+  \vspace{4pt}
+  {Comunicación entre procesos con sockets TCP y gRPC\par}
+  \vspace{4pt}
+  {Informe de la práctica\par}
+\end{center}
+\vspace{1.4cm}
+\begin{center}
+\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{>{\bfseries}r l}
+  Integrantes: & Benites Pérez Dariem Alberto \\
+               & Bueno Troya Erwin Daniel \\
+               & Mendoza Villarroel Elian Jossue \\
+  Docente:     & Gleiston Guerrero Ulloa, PhD \\
+  Nivel y paralelo: & Séptimo nivel, paralelo B \\
+  Fecha:       & 22 de noviembre de 2026 \\
+\end{tabular}
+\end{center}
+\vfill
+\begin{center}
+  {\bfseries Repositorio:}\\[4pt]
+  {\small\url{\repourl}}
+\end{center}
+\vspace{1cm}
+\end{titlepage}
+
+\tableofcontents
+\clearpage
+
+\section{Objetivo e hipótesis}
+
+El objetivo de la práctica es construir el mismo sistema de tres nodos con dos mecanismos de comunicación, sockets TCP y gRPC, medir los dos con el mismo protocolo y comprobar con los datos reales que los relojes de Lamport ordenan bien los eventos.
+
+La hipótesis la escribimos en la bitácora el 19 de noviembre de 2026, antes de correr el experimento oficial, en el commit \commit{d47182071b3e371da3b6727631d5171f069eec10}. Aquí va sin cambios:
+
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Mensajes de 100 caracteres:} sockets tendrá menor latencia que gRPC y enviará más mensajes por segundo. En sockets cada envío es el JSON con 4 bytes de longitud sobre una conexión TCP que ya está abierta. En gRPC cada llamada también pasa por HTTP/2, por la codificación con Protocol Buffers y por el pool de hilos del servidor. Con un mensaje corto, ese trabajo fijo de cada llamada es casi todo el tiempo.
+  \item \textbf{Mensajes de 10\,000 caracteres:} las dos latencias subirán, porque hay más bytes que copiar y enviar. La diferencia relativa entre los dos mecanismos se achicará: con un mensaje grande pesa más el envío de los datos que el trabajo fijo de la llamada, y los dos formatos ocupan casi lo mismo, porque el texto pesa mucho más que las etiquetas del JSON o de Protocol Buffers.
+  \item \textbf{Tres clientes a la vez (A $\rightarrow$ B, B $\rightarrow$ C y C $\rightarrow$ B):} la latencia de cada cliente subirá, porque los procesos compiten por la CPU y porque nodo-B recibe de A y de C al mismo tiempo. El total de mensajes por segundo de los tres será mayor que con un solo cliente, pero no el triple, porque nodo-B se vuelve el cuello de botella.
+\end{itemize}
+
+\section{Arquitectura}
+
+El diseño parte del diagrama de comunicación de FORM-TL-01: un sistema de reservas de vuelos con cuatro procesos (cliente, servidor de aplicación, servicio de pagos y base de datos), donde el cliente hablaba con el servidor por sockets y el servidor llamaba a pagos con gRPC. Para esta práctica lo cambiamos así:
+
+\begin{itemize}[leftmargin=*]
+  \item Quedan tres nodos: nodo-A es el cliente de reservas, nodo-B el servidor de aplicación y nodo-C el servicio de pagos. La base de datos sale, porque la guía pide tres nodos y el escenario no necesita guardar datos: cada paso va dentro de un mensaje.
+  \item Los tres corren como procesos en 127.0.0.1, con los puertos 5000, 5001 y 5002.
+  \item En TL-01 cada enlace tenía un solo mecanismo. Aquí el escenario completo existe dos veces, una con sockets y otra con gRPC, para comparar los dos con los mismos mensajes.
+  \item Cada nodo es servidor y cliente a la vez: abre su puerto para recibir, y abre una conexión TCP o un canal gRPC hacia cada nodo al que le envía.
+  \item La notificación al cliente, que en TL-01 era asíncrona, pasa a ser un mensaje más del escenario.
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[
+  nodo/.style={draw, rounded corners=3pt, line width=0.8pt, minimum width=3.4cm, minimum height=2.1cm, align=center},
+  flecha/.style={-{Stealth[length=2.6mm]}, line width=0.7pt}]
+  \node[nodo] (A) at (0,0) {\textbf{nodo-A}\\[2pt] Cliente de reservas\\[2pt] \small 127.0.0.1:5000};
+  \node[nodo] (B) at (6.6,0) {\textbf{nodo-B}\\[2pt] Servidor de aplicación\\[2pt] \small 127.0.0.1:5001};
+  \node[nodo] (C) at (13.2,0) {\textbf{nodo-C}\\[2pt] Servicio de pagos\\[2pt] \small 127.0.0.1:5002};
+  \draw[flecha] ([yshift=5mm]A.east) -- node[above, font=\small]{1, 4, 8, 10, 14, 18} ([yshift=5mm]B.west);
+  \draw[flecha] ([yshift=-5mm]B.west) -- node[below, font=\small]{3, 7, 9, 13, 17} ([yshift=-5mm]A.east);
+  \draw[flecha] ([yshift=5mm]B.east) -- node[above, font=\small]{5, 11, 15, 19} ([yshift=5mm]C.west);
+  \draw[flecha] ([yshift=-5mm]C.west) -- node[below, font=\small]{2, 6, 12, 16, 20} ([yshift=-5mm]B.east);
+  \node[font=\small, align=center] at (6.6,-2.3) {Cada flecha existe dos veces: con sockets TCP (JSON con 4 bytes de longitud)\\ y con gRPC (\texttt{EnviarMensaje} devuelve un \texttt{Acuse}, sobre HTTP/2).};
+\end{tikzpicture}}
+\caption{Los tres nodos, actualizados desde el diagrama de FORM-TL-01. Los números son los pasos del escenario que viajan por cada flecha.}
+\label{fig:arquitectura}
+\end{figure}
+
+Los 20 pasos siguen una reserva completa. A busca vuelos (1 y 3) mientras C avisa que el servicio de pagos está disponible (2). Después A reserva y B cobra a través de C (4 a 7), A consulta el estado (8 y 9), agrega una maleta cuyo primer cobro se rechaza y el segundo se aprueba (10 a 17), y al final pide los comprobantes (18 a 20). Cada paso sale cuando su nodo recibe el paso del que depende. Los pasos 1 y 2 no dependen de nada: cada uno sale apenas su nodo tiene listas sus conexiones. Los pasos están en \texttt{src/comun/escenario.py} y la tabla completa, con los relojes, está en la sección~\ref{sec:lamport}.
+
+\subsection{Mensajes con sockets}
+
+En sockets cada mensaje es un JSON con los campos que pide la guía. Por ejemplo, el paso 1:
+
+\begin{lstlisting}
+{"sender": "nodo-A", "timestamp": 1, "message": "Consultar vuelos UIO-GYE para el 15/12"}
+\end{lstlisting}
+
+Antes del JSON van 4 bytes con su longitud. El nodo que recibe contesta con otro JSON, que es el acuse:
+
+\begin{lstlisting}
+{"sender": "nodo-B", "timestamp": 2, "message": "ack"}
+\end{lstlisting}
+
+\subsection{Contrato de gRPC}
+
+En gRPC el mensaje y el acuse están definidos en \texttt{proto/mensajeria.proto}:
+
+\lstinputlisting[language=proto]{../proto/mensajeria.proto}
+
+\texttt{Mensaje} tiene los mismos tres campos que el JSON. Los números \texttt{= 1}, \texttt{= 2} y \texttt{= 3} no son valores: identifican cada campo en la codificación binaria, que guarda el número de campo y el tipo antes de cada valor \cite{protobuf_codificacion}. \texttt{EnviarMensaje} es una llamada unaria: un mensaje de ida y una respuesta \cite{grpc_conceptos}. El código de Python que usan los nodos (\texttt{mensajeria\_pb2.py} y \texttt{mensajeria\_pb2\_grpc.py}) se genera con \texttt{grpcio-tools} desde ese archivo, con \texttt{src/grpc/generar\_codigo.bat}.
+
+\section{Implementación}
+
+El código está en Python 3.12. La parte común (reloj, escenario, registro en CSV y protocolo de medición) está en \texttt{src/comun/}, y cada mecanismo tiene su carpeta: \texttt{src/sockets/} y \texttt{src/grpc/}. Estas son las decisiones principales.
+
+\subsection{Reloj de Lamport}
+
+Las dos reglas del reloj \cite{lamport1978} están en una sola clase que usan los dos mecanismos. El reloj tiene un candado porque en un mismo nodo pueden recibir varios hilos a la vez:
+
+\begin{lstlisting}[language=Python]
+def antes_de_enviar(self):
+    with self._candado:
+        self._valor += 1
+        return self._valor
+
+def al_recibir(self, recibido):
+    with self._candado:
+        self._valor = max(self._valor, int(recibido)) + 1
+        return self._valor
+\end{lstlisting}
+
+El acuse no cambia el reloj en ningún mecanismo: es la respuesta del transporte, no un mensaje del escenario. Por eso en el CSV de eventos solo quedan los 20 envíos y las 20 recepciones.
+
+\subsection{Mensajes sobre TCP}
+
+TCP entrega un flujo de bytes y no marca dónde termina cada mensaje \cite{rfc9293}. Por eso cada JSON va precedido de su longitud, y el que recibe lee en un ciclo hasta completar los bytes que faltan, porque \texttt{recv} puede devolver menos de lo pedido:
+
+\begin{lstlisting}[language=Python]
+CABECERA = struct.Struct(">I")
+
+def enviar_json(conexion, datos):
+    cuerpo = json.dumps(datos, ensure_ascii=False).encode("utf-8")
+    conexion.sendall(CABECERA.pack(len(cuerpo)) + cuerpo)
+
+def _recibir_exacto(conexion, cantidad):
+    partes = bytearray()
+    while len(partes) < cantidad:
+        bloque = conexion.recv(cantidad - len(partes))
+        if not bloque:
+            return None
+        partes.extend(bloque)
+    return bytes(partes)
+\end{lstlisting}
+
+Cada conexión tiene activado \texttt{TCP\_NODELAY}, que apaga el algoritmo de Nagle: sin eso, TCP puede retrasar los mensajes cortos para juntarlos y la medición saldría inflada.
+
+\subsection{Recibir y enviar en hilos distintos}
+\label{sec:hilos}
+
+Al diseñar los nodos vimos un riesgo: si el hilo que recibe un mensaje también hace el envío siguiente, dos nodos pueden quedarse esperando el acuse del otro. Por eso el hilo que recibe solo actualiza el reloj, anota el evento y responde el acuse, y deja los pasos siguientes en una cola que atiende otro hilo. En sockets queda así:
+
+\begin{lstlisting}[language=Python]
+reloj = self.reloj.al_recibir(mensaje["timestamp"])
+if self.modo == "escenario":
+    self._procesar_recepcion(mensaje, reloj)
+enviar_json(conexion, {"sender": self.nombre, "timestamp": reloj, "message": "ack"})
+\end{lstlisting}
+
+Los envíos usan una sola conexión por cada nodo destino, que se abre la primera vez y se reutiliza. Si el otro nodo todavía no arranca, se reintenta durante 30 segundos.
+
+\subsection{Servidor y cliente de gRPC}
+
+En gRPC el procedimiento remoto hace lo mismo que el hilo que recibe en sockets:
+
+\begin{lstlisting}[language=Python]
+def EnviarMensaje(self, request, context):
+    reloj = self.nodo.reloj.al_recibir(request.timestamp)
+    if self.nodo.modo == "escenario":
+        self.nodo.procesar_recepcion(request, reloj)
+    return mensajeria_pb2.Acuse(receptor=self.nodo.nombre, timestamp=reloj, recibido=True)
+\end{lstlisting}
+
+Las llamadas viajan sobre HTTP/2, que reparte cada mensaje en tramas dentro de una conexión TCP \cite{rfc9113}. El servidor atiende con un pool de 10 hilos (\texttt{ThreadPoolExecutor}). Cada nodo crea una sola vez el canal hacia cada destino y espera con \texttt{channel\_ready\_future} a que ese nodo arranque. Los canales tienen dos opciones: \texttt{grpc.enable\_http\_proxy = 0}, para que un proxy del sistema no se meta en las llamadas a 127.0.0.1, y \texttt{grpc.max\_reconnect\_backoff\_ms = 1000}, para que reintente cada segundo mientras arrancan los otros nodos. En el escenario cada llamada tiene un plazo de 10 segundos.
+
+\subsection{El mismo protocolo de medición para los dos}
+
+Para que la comparación sea justa, sockets y gRPC usan la misma función de medición (\texttt{src/comun/medicion.py}). Cada mecanismo solo le pasa su propia función \texttt{enviar}, que manda el mensaje y regresa cuando llega el acuse:
+
+\begin{lstlisting}[language=Python]
+for envio in range(1, envios + 1):
+    marca = reloj.antes_de_enviar()
+    t0 = time.perf_counter()
+    enviar(marca, texto)
+    t1 = time.perf_counter()
+\end{lstlisting}
+
+En sockets la conexión se abre antes de medir. En el cliente de gRPC que mide la latencia la llamada no tiene plazo, para que espere igual que el de sockets. La corrida de calentamiento se guarda en el CSV, marcada con \texttt{calentamiento = 1}, y el análisis la descarta.
+
+\subsection{Ejecución}
+
+La carpeta \texttt{src/grpc} tiene el mismo nombre que la librería \texttt{grpc}. Para que Python no las confunda, todo se ejecuta con \texttt{python -m} desde la raíz del repositorio. El script \texttt{src/ejecutar\_experimento.py} corre las tres pruebas de los dos mecanismos en orden, guarda las condiciones de la máquina en \texttt{data/condiciones.json} y, al final, escribe \texttt{data/SHA256SUMS}.
+
+\section{Protocolo experimental}
+
+\subsection{Entorno}
+
+Los tres nodos corren como procesos en la misma computadora. La tabla~\ref{tab:condiciones} sale de \texttt{data/condiciones.json}, que escribe el script del experimento al arrancar.
+
+\begin{table}[H]
+\centering
+\caption{Condiciones de la máquina durante el experimento oficial.}
+\label{tab:condiciones}
+\small
+\tablagenerada{condiciones}
+\end{table}
+
+\subsection{Pruebas y repeticiones}
+
+Para cada mecanismo se corren tres pruebas:
+
+\begin{enumerate}[leftmargin=*]
+  \item \textbf{Escenario:} los 20 intercambios entre los tres nodos. Cada nodo guarda sus eventos en su propio CSV, por ejemplo \texttt{data/eventos\_grpc\_nodo-B.csv}.
+  \item \textbf{Latencia:} nodo-B queda solo como receptor y nodo-A le envía. Hay 1 corrida de calentamiento y 5 corridas de 100 envíos, con mensajes de 100 y de 10\,000 caracteres. Son 500 mediciones válidas por mecanismo y tamaño.
+  \item \textbf{Concurrencia:} A $\rightarrow$ B, B $\rightarrow$ C y C $\rightarrow$ B envían al mismo tiempo, con las mismas corridas y tamaños. Cada cliente es un proceso aparte, con su propio reloj, y los tres arrancan en el mismo instante (opción \texttt{--iniciar-en}).
+\end{enumerate}
+
+La latencia es el tiempo de ida y vuelta: desde que se envía un mensaje hasta que llega su acuse, medido con \texttt{time.perf\_counter()}. Para cada mecanismo, tamaño y prueba, el script de análisis calcula la media, la mediana, la desviación estándar, el percentil 95 y los mensajes por segundo de cada corrida (100 envíos entre la duración de la corrida). El intervalo de confianza del 95\,\% de la media se calcula con las 5 medias de corrida y la $t$ de Student.
+
+\subsection{Comandos}
+
+\begin{lstlisting}
+python -m src.ejecutar_experimento --notas "..."
+python analysis\analizar.py
+python analysis\verificar_lamport.py
+\end{lstlisting}
+
+Los CSV de \texttt{data/} no se editan. Con \texttt{sha256sum -c SHA256SUMS}, dentro de \texttt{data/}, se comprueba que siguen iguales, y \texttt{analizar.py} también los compara antes de calcular.
+
+\subsection{Una corrida descartada}
+
+La primera corrida oficial, a las 15:29 del 20 de noviembre, dejó 9\,294 filas de latencia en lugar de 9\,600, y dos filas mal formadas. La causa estaba en nuestro código: en la prueba de concurrencia los tres clientes terminan casi al mismo tiempo y escribían el mismo CSV a la vez, así que unas filas pisaban a otras. Corregimos \texttt{src/comun/registro.py} para que cada proceso espere su turno antes de escribir, comprobamos con dos corridas de prueba que salían las 9\,600 filas y repetimos el experimento completo a las 15:32. Los datos de \texttt{data/} y todo lo que sigue son de esa segunda corrida. La primera no se usa.
+
+\section{Resultados}
+
+Todas las tablas y gráficos de esta sección salen de \texttt{analysis/analizar.py}, a partir de las 9\,600 mediciones del experimento oficial. De ellas, 1\,600 son de calentamiento y no entran en los cálculos.
+
+\textbf{Un cliente.} Con mensajes de 100 caracteres, sockets tardó en promedio 0,030~ms por ida y vuelta y gRPC 0,231~ms: gRPC fue 7,7 veces más lento (+668\,\%) y envió un 86\,\% menos de mensajes por segundo, 4\,205 frente a 30\,079 (tablas~\ref{tab:estadisticas} y~\ref{tab:diferencias}). Con 10\,000 caracteres, sockets subió a 0,059~ms y gRPC a 0,250~ms, y la diferencia bajó a 4,2 veces (+323\,\%).
+
+\textbf{Tamaño del mensaje.} Pasar de 100 a 10\,000 caracteres casi duplicó la latencia de sockets (+96\,\%), pero a gRPC solo le sumó un 7,9\,\% (tabla~\ref{tab:tamano}). En tiempo absoluto, el mensaje largo le costó 0,029~ms más a sockets y 0,018~ms más a gRPC.
+
+\textbf{Tres clientes a la vez.} La latencia media subió entre un 10\,\% y un 24\,\%, y el total de mensajes por segundo de los tres clientes fue entre 2,5 y 2,7 veces el de un solo cliente (tabla~\ref{tab:concurrencia}). Al separar por cliente (tabla~\ref{tab:por-cliente}), en gRPC los dos clientes que le envían a nodo-B tardaron entre un 14\,\% y un 17\,\% más que el que le envía a nodo-C. En sockets los tres clientes quedaron a menos de 0,002~ms entre sí.
+
+\textbf{Dispersión.} La mediana quedó siempre por debajo de la media, porque hay mediciones sueltas mucho más altas que el resto (figura~\ref{fig:cajas}). El caso extremo fue gRPC con tres clientes y 100 caracteres: su máximo llegó a 1,754~ms, frente a una mediana de 0,259~ms.
+
+\begin{table}[H]
+\centering
+\caption{Latencia de ida y vuelta y rendimiento por mecanismo, tamaño y cantidad de clientes. Las corridas de calentamiento no se cuentan.}
+\label{tab:estadisticas}
+\small
+\resizebox{\textwidth}{!}{\tablagenerada{estadisticas}}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Diferencia de gRPC respecto a sockets en las mismas condiciones.}
+\label{tab:diferencias}
+\small
+\tablagenerada{diferencias}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Efecto del tamaño del mensaje: de 100 a 10\,000 caracteres.}
+\label{tab:tamano}
+\small
+\tablagenerada{tamano}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Efecto de la concurrencia: un cliente frente a tres clientes a la vez.}
+\label{tab:concurrencia}
+\small
+\resizebox{\textwidth}{!}{\tablagenerada{concurrencia}}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba de tres clientes a la vez, separada por cliente.}
+\label{tab:por-cliente}
+\small
+\tablagenerada{por_cliente}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\figuragenerada{cajas_latencia}{\textwidth}
+\caption{Distribución de la latencia de ida y vuelta (escala logarítmica).}
+\label{fig:cajas}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\figuragenerada{barras_latencia}{\textwidth}
+\caption{Latencia media con su intervalo de confianza del 95\,\%.}
+\label{fig:barras-latencia}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\figuragenerada{barras_rendimiento}{\textwidth}
+\caption{Mensajes por segundo con su intervalo de confianza del 95\,\%.}
+\label{fig:barras-rendimiento}
+\end{figure}
+
+\section{Discusión}
+
+\subsection{Latencia y rendimiento}
+
+En este experimento sockets ganó en todos los casos: menor latencia y más mensajes por segundo, con uno o con tres clientes. Lo que más pesa en gRPC es un costo fijo por llamada. Con un cliente, la diferencia con sockets fue de 0,201~ms con mensajes cortos y de 0,191~ms con mensajes largos: casi lo mismo, aunque el mensaje creció 100 veces. Ese costo sale de lo que gRPC hace en cada llamada y sockets no: armar las tramas de HTTP/2, codificar con Protocol Buffers y pasar la llamada a un hilo del pool del servidor.
+
+El tamaño del mensaje afectó más a sockets que a gRPC (+0,029~ms frente a +0,018~ms). Una explicación posible es que en sockets el texto se convierte a JSON y de vuelta en cada lado, mientras que gRPC copia el campo de texto sin transformarlo. No lo medimos por separado, así que queda como hipótesis.
+
+Con tres clientes, el total de mensajes por segundo creció, pero no se triplicó. En gRPC la tabla~\ref{tab:por-cliente} muestra que nodo-B, que atiende a dos clientes, los hizo esperar más. En sockets no hubo esa diferencia, así que ahí la pérdida viene de que los cinco procesos (tres clientes y dos receptores) comparten la misma CPU, no de nodo-B.
+
+Otros trabajos comparan gRPC con REST, no con sockets. Niswar et al. midieron REST, GraphQL y gRPC entre microservicios y gRPC tuvo el menor tiempo de respuesta \cite{niswar2024}. Bolanowski et al. compararon REST y gRPC para proponer criterios de elección según la tarea \cite{bolanowski2022}. Nuestro caso es distinto: los sockets van un nivel más abajo que REST, sin HTTP y sin un formato impuesto. Que gRPC salga más lento que sockets no contradice esos trabajos, porque gRPC carga con capas que REST también tiene y que los sockets crudos no tienen.
+
+\subsection{Facilidad de desarrollo}
+
+Con sockets tuvimos que resolver a mano cosas que gRPC ya trae: marcar dónde termina cada mensaje, leer hasta completar los bytes, armar y leer el JSON, responder el acuse, reintentar la conexión y apagar Nagle. Cada una es un lugar donde puede haber errores, y el bloqueo mutuo de la sección~\ref{sec:hilos} apareció justo ahí.
+
+Con gRPC el envío es una llamada a una función, \texttt{stub.EnviarMensaje(...)}, y el acuse es lo que devuelve. A cambio hubo que instalar \texttt{grpcio-tools}, generar el código desde el \texttt{.proto} cada vez que cambia y resolver un problema que en sockets no existe: el código generado importa \texttt{mensajeria\_pb2} por su nombre suelto, así que \texttt{src/grpc/\_\_init\_\_.py} agrega su carpeta a la ruta de búsqueda.
+
+\subsection{Tipado de los mensajes}
+
+El JSON no tiene tipos fijos. Si un nodo mandara el reloj como texto, el otro lo recibiría sin quejarse, por eso \texttt{al\_recibir} lo convierte con \texttt{int()}. Si faltara un campo, el error saldría recién al leerlo. En gRPC los tipos están en el \texttt{.proto}: \texttt{timestamp} es \texttt{int64}, y la clase generada no acepta texto en ese campo. El contrato es el mismo para los dos lados y no hay que repetirlo en el código.
+
+\subsection{Manejo de errores}
+
+En sockets los errores llegan como excepciones del sistema operativo (por ejemplo, conexión rechazada) o como un \texttt{recv} que devuelve cero bytes cuando el otro lado cerró, y cada caso hay que detectarlo y decidir qué hacer. Por eso el nodo reintenta la conexión durante 30 segundos y trata el cierre como fin de la conversación.
+
+En gRPC todo error de una llamada es un \texttt{grpc.RpcError} con un código de estado. Si el otro nodo no está, el código es \texttt{UNAVAILABLE}, y si se vence el plazo, \texttt{DEADLINE\_EXCEEDED} \cite{grpc_estados}. El plazo se fija por llamada \cite{grpc_conceptos}. Hay un detalle: con \texttt{DEADLINE\_EXCEEDED} la operación pudo haberse ejecutado en el servidor \cite{grpc_estados}, así que reintentar un cobro, como el paso 5, podría cobrar dos veces si la operación no es idempotente.
+
+\subsection{¿Se cumplió la hipótesis?}
+
+\begin{itemize}[leftmargin=*]
+  \item \textbf{100 caracteres: se cumplió.} Sockets tuvo menor latencia (0,030~ms frente a 0,231~ms) y envió 7,2 veces más mensajes por segundo.
+  \item \textbf{10\,000 caracteres: se cumplió, pero la explicación era incompleta.} Las dos latencias subieron y la diferencia relativa bajó de 7,7 a 4,2 veces. Sin embargo, la diferencia absoluta casi no cambió (0,201~ms y 0,191~ms): en gRPC el costo fijo de la llamada siguió siendo casi todo el tiempo. La razón bajó porque sockets se volvió más lento, no porque gRPC se acercara.
+  \item \textbf{Tres clientes: se cumplió en las cifras y en parte en la causa.} La latencia de cada cliente subió (entre 10\,\% y 24\,\%) y el total de mensajes por segundo fue entre 2,5 y 2,7 veces el de un cliente, sin llegar al triple. Que nodo-B sea el cuello de botella se ve en gRPC, pero no en sockets.
+\end{itemize}
+
+\subsection{Qué conviene en nuestro PFC}
+
+Nuestro PFC es el sistema de presustentaciones de la UTEQ: un front en Angular, un backend en Spring Boot con JWT y PostgreSQL. Entre Angular y el backend no sirve ninguno de los dos mecanismos tal como los usamos aquí: el navegador no puede abrir conexiones TCP propias, y para llamar a gRPC necesita la variante gRPC-Web y un proxy. Ahí sigue REST.
+
+gRPC sí conviene si separamos un servicio interno del backend, por ejemplo el envío de correos o la generación de actas en PDF: el \texttt{.proto} fija el contrato entre los dos equipos que los programan y el plazo por llamada evita que el backend se quede esperando. Los sockets crudos solo los usaríamos para algo muy puntual entre dos procesos nuestros donde cada milisegundo cuente, porque todo lo que gRPC trae resuelto habría que programarlo y mantenerlo.
+
+\subsection{Amenazas a la validez}
+
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Una sola máquina y sin red real:} los tres nodos se hablan por 127.0.0.1, así que no hay latencia de red. Las diferencias muestran el costo del software de cada mecanismo, no lo que pasaría entre dos computadoras.
+  \item \textbf{Clientes y receptores comparten la CPU:} en la prueba de concurrencia los procesos que envían y los que reciben compiten por los mismos núcleos.
+  \item \textbf{Python:} dentro de cada proceso los hilos comparten el intérprete, así que un receptor que atiende a dos clientes, como nodo-B, no los atiende en paralelo de verdad.
+  \item \textbf{Otros programas y el sistema operativo:} Windows y los programas abiertos pueden quitarle tiempo de CPU a los nodos en cualquier momento.
+  \item \textbf{Orden de las pruebas:} sockets siempre corre antes que gRPC en la misma sesión.
+  \item \textbf{Una sola sesión:} las 5 corridas de cada caso salen de una sola ejecución del experimento, en un mismo momento del día.
+  \item \textbf{Las cifras dependen de la máquina:} en las capturas de Erwin y Elian, tomadas en sus laptops con la carpeta \texttt{pruebas}, los promedios por corrida fueron mucho más altos (entre 0,120 y 0,137~ms con sockets en la captura 02, y entre 0,834 y 0,926~ms con gRPC en la 04). Lo que se puede comparar entre máquinas es la proporción entre los dos mecanismos, no los milisegundos.
+\end{itemize}
+
+\section{Verificación del reloj de Lamport}
+\label{sec:lamport}
+
+El script \texttt{analysis/verificar\_lamport.py} lee los CSV de eventos del experimento oficial y no genera valores propios. Para cada mecanismo comprueba tres cosas:
+
+\begin{enumerate}[leftmargin=*]
+  \item que cada nodo cumple las dos reglas: el reloj de un envío es el anterior más uno, y el de una recepción es el máximo entre el anterior y el recibido, más uno;
+  \item que cada envío tiene su recepción y que el reloj al recibir es mayor que el reloj al enviar;
+  \item que, si un evento sucedió antes que otro, su reloj es menor. Para eso arma el orden de cada nodo y los mensajes, y revisa todos los pares de eventos.
+\end{enumerate}
+
+Con los datos oficiales, los dos mecanismos dieron \textbf{CORRECTO} (captura 07 y \texttt{analysis/resultados/lamport\_*.txt}). En cada uno hubo 40 eventos, 20 envíos y 20 recepciones, y:
+
+\begin{itemize}[leftmargin=*]
+  \item las reglas del reloj se cumplieron en todos los eventos de los tres nodos;
+  \item las 20 recepciones tienen su envío, y en todas el reloj al recibir es mayor que el reloj al enviar, por 1 o 2 unidades;
+  \item en todos los pares de eventos donde uno sucedió antes que el otro (774 con sockets y 778 con gRPC), el primero tiene el reloj menor.
+\end{itemize}
+
+\begin{table}[H]
+\centering
+\caption{Los 20 mensajes del escenario con sockets y el reloj al enviar y al recibir. El asterisco marca un envío concurrente con otro evento que tiene el mismo valor de reloj.}
+\label{tab:lamport-sockets}
+\small
+\tablagenerada{lamport_sockets}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\figuragenerada{lamport_sockets}{\textwidth}
+\caption{Diagrama de espacio y tiempo del escenario con sockets: cada línea es un nodo y cada flecha un mensaje, ubicado según el valor del reloj.}
+\label{fig:lamport-sockets}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\caption{Los 20 mensajes del escenario con gRPC. Los pasos 1 y 2 salieron los dos con reloj 1.}
+\label{tab:lamport-grpc}
+\small
+\tablagenerada{lamport_grpc}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\figuragenerada{lamport_grpc}{\textwidth}
+\caption{Diagrama de espacio y tiempo del escenario con gRPC.}
+\label{fig:lamport-grpc}
+\end{figure}
+
+\subsection{Eventos concurrentes con el mismo reloj}
+
+Con gRPC aparece el caso más claro (tabla~\ref{tab:lamport-grpc}): nodo-A envía el paso 1 y nodo-C envía el paso 2 apenas arrancan, sin haber recibido nada, así que los dos envíos tienen reloj 1. Ninguno sucedió antes que el otro, porque no hay ningún mensaje que los conecte.
+
+Con sockets el orden real fue distinto (tabla~\ref{tab:lamport-sockets}). nodo-C recibió el pedido de cobro del paso 5 antes de terminar de conectarse con los otros nodos, así que primero respondió el paso 6, con reloj 9, y recién después envió el paso 2, con reloj 10. El escenario lo permite, porque el paso 2 no depende de nada. Ese envío quedó concurrente con la recepción del paso 6 en nodo-B, que también tiene reloj 10. Lo mismo pasa con la recepción del paso 7 en nodo-A y la del paso 2 en nodo-B, las dos con reloj 12.
+
+Lamport garantiza que si un evento sucedió antes que otro, su reloj es menor, pero no al revés \cite{lamport1978}. Con dos valores iguales, o con un valor menor, el reloj no dice si hubo una relación de causa o si los eventos fueron concurrentes. Por eso nuestro script no usa los relojes para encontrar los pares concurrentes: los busca en el orden de cada nodo y en los mensajes. Para que el propio reloj lo distinga hacen falta relojes vectoriales, que guardan un contador por cada nodo \cite{vansteen2023}.
+
+\section{Conclusiones}
+
+\begin{itemize}[leftmargin=*]
+  \item Con un cliente y mensajes de 100 caracteres, gRPC aumentó la latencia media en un 668\,\% respecto a sockets (de 0,030~ms a 0,231~ms) y redujo los mensajes por segundo en un 86\,\%.
+  \item Con mensajes de 10\,000 caracteres, gRPC aumentó la latencia media en un 323\,\% (de 0,059~ms a 0,250~ms). La diferencia relativa bajó porque la latencia de sockets subió un 96\,\% con el mensaje largo, mientras que la de gRPC subió un 7,9\,\%.
+  \item El costo propio de una llamada gRPC fue de unos 0,2~ms en esta máquina, casi igual con los dos tamaños (0,201~ms y 0,191~ms por encima de sockets).
+  \item Con tres clientes a la vez, la latencia media de cada cliente subió entre un 10\,\% y un 24\,\%, y el total de mensajes por segundo fue entre 2,5 y 2,7 veces el de un cliente. En gRPC, los clientes que le envían a nodo-B tardaron entre un 14\,\% y un 17\,\% más que el que le envía a nodo-C.
+  \item En los 40 eventos de cada mecanismo, el reloj al recibir fue siempre mayor que al enviar, y en los 774 y 778 pares ordenados el primero tuvo el reloj menor. Hubo 1 par concurrente con el mismo reloj en gRPC y 2 en sockets.
+  \item Sockets fue más rápido en todos los casos medidos, pero exigió programar a mano el formato, la lectura completa de cada mensaje, el acuse y los reintentos. gRPC cuesta unos 0,2~ms más por llamada y a cambio trae el contrato, los tipos y los códigos de error.
+\end{itemize}
+
+\section{Evidencias de ejecución}
+
+Las capturas están en \texttt{docs/capturas/}. En cada una se ve el usuario y el nombre de la computadora que imprime cada programa al arrancar, y la fecha y la hora de Windows.
+
+\begin{table}[H]
+\centering
+\caption{Capturas de ejecución.}
+\label{tab:capturas}
+\small
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{6.2cm} >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}p{3.0cm}}
+\toprule
+Archivo & Qué muestra & Computadora \\
+\midrule
+\texttt{01-sockets-tres-nodos-erwin.png} & Los tres nodos con sockets y los 20 intercambios & Erwin,\newline \texttt{Ryzen7} \\
+\texttt{02-sockets-latencia-erwin.png} & Medición de latencia con sockets & Erwin,\newline \texttt{Ryzen7} \\
+\texttt{03-grpc-tres-nodos-elian.png} & Los tres nodos con gRPC y los 20 intercambios & Elian,\newline \texttt{DESKTOP-7PPDV1J} \\
+\texttt{04-grpc-latencia-elian.png} & Medición de latencia con gRPC & Elian,\newline \texttt{DESKTOP-7PPDV1J} \\
+\texttt{05a-experimento-inicio-dariem.png} & Inicio del experimento oficial & Dariem,\newline \texttt{DALBEZ-ROG-PC} \\
+\texttt{05b-experimento-fin-dariem.png} & Final del experimento oficial & Dariem,\newline \texttt{DALBEZ-ROG-PC} \\
+\texttt{06-analisis-dariem.png} & Ejecución de \texttt{analizar.py} & Dariem,\newline \texttt{DALBEZ-ROG-PC} \\
+\texttt{07-verificar-lamport-dariem.png} & Ejecución de \texttt{verificar\_lamport.py} & Dariem,\newline \texttt{DALBEZ-ROG-PC} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Las capturas 05a a 07 son de la segunda corrida oficial, la que está en \texttt{data/}. Esas cuatro ejecuciones las lanzó Claude en la computadora de Dariem, a su pedido, como dice la declaración de uso de IA.
+
+\section{Tabla de aportes}
+
+\begin{table}[H]
+\centering
+\caption{Qué hizo cada integrante. Cada nombre enlaza a sus commits en el repositorio.}
+\label{tab:aportes}
+\small
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{3.6cm} >{\raggedright\arraybackslash}X}
+\toprule
+Integrante & Aportes \\
+\midrule
+\href{\repourl/commits/main?author=DALBEZ-ROG}{Benites Pérez Dariem Alberto} & Base del repositorio, carátula y README; código común (\texttt{src/comun/}), con la corrección de la escritura de los CSV; script del experimento; scripts de análisis y de verificación de Lamport; datos del experimento oficial con sus tablas y gráficos; informe y bitácora. \\
+\href{\repourl/commits/main?author=Troyano2004}{Bueno Troya Erwin Daniel} & Protocolo de mensajes, nodo y cliente de medición con sockets TCP (\texttt{src/sockets/}), y capturas 01 y 02 en su computadora. \\
+\href{\repourl/commits/main?author=Elianmen123}{Mendoza Villarroel Elian Jossue} & Contrato \texttt{.proto}, script de generación del código, nodo y cliente de medición con gRPC (\texttt{src/grpc/}), capturas 03 y 04 en su computadora, y bitácora. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Los tres acordamos la hipótesis antes de medir.
+
+\section{Declaración de uso de inteligencia artificial}
+
+\noindent
+\begin{tabularx}{\textwidth}{>{\bfseries}l >{\raggedright\arraybackslash}X}
+  Herramienta: & Claude (Anthropic), modelo Claude Opus 5.5, en la aplicación Claude Code. \\[3pt]
+  Para qué se usó: & Propuso cómo repartir el trabajo entre los tres y escribió los borradores de todo el código: la parte común, los nodos y clientes de sockets y de gRPC, el \texttt{.proto}, el script del experimento y los dos scripts de análisis. Antes del experimento oficial corrió pruebas de funcionamiento en una copia aparte, cuyos datos se borraron y no se usan en este informe. Redactó la hipótesis a partir de la teoría, a pedido del equipo, que la revisó antes de subirla. A pedido de Dariem, ejecutó en su computadora el experimento oficial, el análisis y la verificación de Lamport, y tomó las capturas 05a a 07 de esas ejecuciones. En la primera corrida encontró las filas perdidas por la escritura simultánea de los CSV, corrigió \texttt{src/comun/registro.py} y repitió el experimento. Agregó al análisis la tabla por cliente. Redactó los borradores del README, de la bitácora, de la carátula, de las instrucciones para cada integrante y de este informe, con los resultados y la discusión, y buscó y comprobó las referencias. \\[3pt]
+  Cómo se verificó: & Cada integrante leyó su parte del código, la ejecutó en su computadora y la subió con sus propios commits; las capturas 01 a 04 las tomaron Erwin y Elian. Los datos de este informe salen del experimento oficial guardado en \texttt{data/}, con su \texttt{SHA256SUMS}, y las tablas y gráficos los genera el script de análisis. Cada cifra del texto se comparó con esos resultados. Cada referencia con DOI se comprobó en Crossref y las demás en la página del editor, el 20 de noviembre de 2026. \\
+\end{tabularx}
+
+\printbibliography[title={Referencias}]
+
+\end{document}

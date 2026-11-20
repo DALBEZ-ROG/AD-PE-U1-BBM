@@ -1,0 +1,395 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.3 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{none/global//global/global/global}
+    \entry{protobuf_codificacion}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=35860ee96595e1e808e7054dc0406d91}{%
+           family={{Protocol Buffers}},
+           familyi={P\bibinitperiod}}}%
+      }
+      \list{organization}{1}{%
+        {Protocol Buffers Documentation}%
+      }
+      \strng{namehash}{35860ee96595e1e808e7054dc0406d91}
+      \strng{fullhash}{35860ee96595e1e808e7054dc0406d91}
+      \strng{fullhashraw}{35860ee96595e1e808e7054dc0406d91}
+      \strng{bibnamehash}{35860ee96595e1e808e7054dc0406d91}
+      \strng{authorbibnamehash}{35860ee96595e1e808e7054dc0406d91}
+      \strng{authornamehash}{35860ee96595e1e808e7054dc0406d91}
+      \strng{authorfullhash}{35860ee96595e1e808e7054dc0406d91}
+      \strng{authorfullhashraw}{35860ee96595e1e808e7054dc0406d91}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{langid}{american}
+      \field{title}{Encoding}
+      \field{urlday}{20}
+      \field{urlmonth}{11}
+      \field{urlyear}{2026}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://protobuf.dev/programming-guides/encoding/
+      \endverb
+      \verb{url}
+      \verb https://protobuf.dev/programming-guides/encoding/
+      \endverb
+    \endentry
+    \entry{grpc_conceptos}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=12acd14e73603d7c8860624f02021b15}{%
+           family={{gRPC}},
+           familyi={g\bibinitperiod}}}%
+      }
+      \strng{namehash}{12acd14e73603d7c8860624f02021b15}
+      \strng{fullhash}{12acd14e73603d7c8860624f02021b15}
+      \strng{fullhashraw}{12acd14e73603d7c8860624f02021b15}
+      \strng{bibnamehash}{12acd14e73603d7c8860624f02021b15}
+      \strng{authorbibnamehash}{12acd14e73603d7c8860624f02021b15}
+      \strng{authornamehash}{12acd14e73603d7c8860624f02021b15}
+      \strng{authorfullhash}{12acd14e73603d7c8860624f02021b15}
+      \strng{authorfullhashraw}{12acd14e73603d7c8860624f02021b15}
+      \field{extraname}{1}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{langid}{american}
+      \field{title}{Core concepts, architecture and lifecycle}
+      \field{urlday}{20}
+      \field{urlmonth}{11}
+      \field{urlyear}{2026}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://grpc.io/docs/what-is-grpc/core-concepts/
+      \endverb
+      \verb{url}
+      \verb https://grpc.io/docs/what-is-grpc/core-concepts/
+      \endverb
+    \endentry
+    \entry{lamport1978}{article}{}{}
+      \name{author}{1}{}{%
+        {{hash=5d77435450d10a850a5b58577b9a456b}{%
+           family={Lamport},
+           familyi={L\bibinitperiod},
+           given={Leslie},
+           giveni={L\bibinitperiod}}}%
+      }
+      \strng{namehash}{5d77435450d10a850a5b58577b9a456b}
+      \strng{fullhash}{5d77435450d10a850a5b58577b9a456b}
+      \strng{fullhashraw}{5d77435450d10a850a5b58577b9a456b}
+      \strng{bibnamehash}{5d77435450d10a850a5b58577b9a456b}
+      \strng{authorbibnamehash}{5d77435450d10a850a5b58577b9a456b}
+      \strng{authornamehash}{5d77435450d10a850a5b58577b9a456b}
+      \strng{authorfullhash}{5d77435450d10a850a5b58577b9a456b}
+      \strng{authorfullhashraw}{5d77435450d10a850a5b58577b9a456b}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Communications of the ACM}
+      \field{langid}{american}
+      \field{month}{7}
+      \field{number}{7}
+      \field{title}{Time, clocks, and the ordering of events in a distributed system}
+      \field{volume}{21}
+      \field{year}{1978}
+      \field{dateera}{ce}
+      \field{pages}{558\bibrangedash 565}
+      \range{pages}{8}
+      \verb{doi}
+      \verb 10.1145/359545.359563
+      \endverb
+    \endentry
+    \entry{rfc9293}{report}{}{}
+      \name{editor}{1}{}{%
+        {{hash=0897fbf87d2b9821822a56bc35f4495a}{%
+           family={Eddy},
+           familyi={E\bibinitperiod},
+           given={W.},
+           giveni={W\bibinitperiod}}}%
+      }
+      \list{institution}{1}{%
+        {Internet Engineering Task Force (IETF)}%
+      }
+      \strng{namehash}{0897fbf87d2b9821822a56bc35f4495a}
+      \strng{fullhash}{0897fbf87d2b9821822a56bc35f4495a}
+      \strng{fullhashraw}{0897fbf87d2b9821822a56bc35f4495a}
+      \strng{bibnamehash}{0897fbf87d2b9821822a56bc35f4495a}
+      \strng{editorbibnamehash}{0897fbf87d2b9821822a56bc35f4495a}
+      \strng{editornamehash}{0897fbf87d2b9821822a56bc35f4495a}
+      \strng{editorfullhash}{0897fbf87d2b9821822a56bc35f4495a}
+      \strng{editorfullhashraw}{0897fbf87d2b9821822a56bc35f4495a}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{labelnamesource}{editor}
+      \field{labeltitlesource}{title}
+      \field{langid}{american}
+      \field{month}{8}
+      \field{number}{9293}
+      \field{title}{Transmission Control Protocol ({TCP})}
+      \field{type}{RFC}
+      \field{year}{2022}
+      \field{dateera}{ce}
+      \verb{doi}
+      \verb 10.17487/RFC9293
+      \endverb
+    \endentry
+    \entry{rfc9113}{report}{}{}
+      \name{editor}{2}{}{%
+        {{hash=633ddec4da4af3fe3e181d564a4f7203}{%
+           family={Thomson},
+           familyi={T\bibinitperiod},
+           given={M.},
+           giveni={M\bibinitperiod}}}%
+        {{hash=5d45971069101ee99ee96460aad4dfa2}{%
+           family={Benfield},
+           familyi={B\bibinitperiod},
+           given={C.},
+           giveni={C\bibinitperiod}}}%
+      }
+      \list{institution}{1}{%
+        {Internet Engineering Task Force (IETF)}%
+      }
+      \strng{namehash}{90e6a79ba0d8a68225a327cac95caa76}
+      \strng{fullhash}{90e6a79ba0d8a68225a327cac95caa76}
+      \strng{fullhashraw}{90e6a79ba0d8a68225a327cac95caa76}
+      \strng{bibnamehash}{90e6a79ba0d8a68225a327cac95caa76}
+      \strng{editorbibnamehash}{90e6a79ba0d8a68225a327cac95caa76}
+      \strng{editornamehash}{90e6a79ba0d8a68225a327cac95caa76}
+      \strng{editorfullhash}{90e6a79ba0d8a68225a327cac95caa76}
+      \strng{editorfullhashraw}{90e6a79ba0d8a68225a327cac95caa76}
+      \field{sortinit}{5}
+      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{labelnamesource}{editor}
+      \field{labeltitlesource}{title}
+      \field{langid}{american}
+      \field{month}{6}
+      \field{number}{9113}
+      \field{title}{{HTTP/2}}
+      \field{type}{RFC}
+      \field{year}{2022}
+      \field{dateera}{ce}
+      \verb{doi}
+      \verb 10.17487/RFC9113
+      \endverb
+    \endentry
+    \entry{niswar2024}{article}{}{}
+      \name{author}{4}{}{%
+        {{hash=85122190271d3caf5142bfccdb8e164d}{%
+           family={Niswar},
+           familyi={N\bibinitperiod},
+           given={Muhammad},
+           giveni={M\bibinitperiod}}}%
+        {{hash=89e65c329363d7bfde44ae73ac3b1bba}{%
+           family={Safruddin},
+           familyi={S\bibinitperiod},
+           given={Reza\bibnamedelima Arisandy},
+           giveni={R\bibinitperiod\bibinitdelim A\bibinitperiod}}}%
+        {{hash=a7c90173cb4ca2e5acd65d8e0eaa4559}{%
+           family={Bustamin},
+           familyi={B\bibinitperiod},
+           given={Anugrayani},
+           giveni={A\bibinitperiod}}}%
+        {{hash=db6c6379cd955dad7d8530036d335271}{%
+           family={Aswad},
+           familyi={A\bibinitperiod},
+           given={Iqra},
+           giveni={I\bibinitperiod}}}%
+      }
+      \strng{namehash}{5360d07a47c8265da4b9b39fd4e53f0a}
+      \strng{fullhash}{a8ea1be7d525c022affe2d35fb47284e}
+      \strng{fullhashraw}{a8ea1be7d525c022affe2d35fb47284e}
+      \strng{bibnamehash}{a8ea1be7d525c022affe2d35fb47284e}
+      \strng{authorbibnamehash}{a8ea1be7d525c022affe2d35fb47284e}
+      \strng{authornamehash}{5360d07a47c8265da4b9b39fd4e53f0a}
+      \strng{authorfullhash}{a8ea1be7d525c022affe2d35fb47284e}
+      \strng{authorfullhashraw}{a8ea1be7d525c022affe2d35fb47284e}
+      \field{sortinit}{6}
+      \field{sortinithash}{b33bc299efb3c36abec520a4c896a66d}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{International Journal of Electronics and Telecommunications}
+      \field{langid}{american}
+      \field{number}{2}
+      \field{title}{Performance evaluation of microservices communication with {REST}, {GraphQL}, and {gRPC}}
+      \field{volume}{70}
+      \field{year}{2024}
+      \field{dateera}{ce}
+      \field{pages}{429\bibrangedash 436}
+      \range{pages}{8}
+      \verb{doi}
+      \verb 10.24425/ijet.2024.149562
+      \endverb
+    \endentry
+    \entry{bolanowski2022}{incollection}{}{}
+      \name{author}{8}{}{%
+        {{hash=67a0faad027205d2b83b0bc3a484d22c}{%
+           family={Bolanowski},
+           familyi={B\bibinitperiod},
+           given={Marek},
+           giveni={M\bibinitperiod}}}%
+        {{hash=2ba589c8c70ec7bb516897d6b2cc46f0}{%
+           family={Żak},
+           familyi={Ż\bibinitperiod},
+           given={Kamil},
+           giveni={K\bibinitperiod}}}%
+        {{hash=38c12e788fc4fb3bd265b60357242387}{%
+           family={Paszkiewicz},
+           familyi={P\bibinitperiod},
+           given={Andrzej},
+           giveni={A\bibinitperiod}}}%
+        {{hash=46799cc4888f9ff1a8c1f9ae33386e4a}{%
+           family={Ganzha},
+           familyi={G\bibinitperiod},
+           given={Maria},
+           giveni={M\bibinitperiod}}}%
+        {{hash=7a9bf22b07dc621f233ca30964427c63}{%
+           family={Paprzycki},
+           familyi={P\bibinitperiod},
+           given={Marcin},
+           giveni={M\bibinitperiod}}}%
+        {{hash=f89075ee5497e1caf082558dec8fc2df}{%
+           family={Sowiński},
+           familyi={S\bibinitperiod},
+           given={Piotr},
+           giveni={P\bibinitperiod}}}%
+        {{hash=39e26273c65743230d753e05b63d0262}{%
+           family={Lacalle},
+           familyi={L\bibinitperiod},
+           given={Ignacio},
+           giveni={I\bibinitperiod}}}%
+        {{hash=0cd73ceec7906e1ce0b70c94e1e15260}{%
+           family={Palau},
+           familyi={P\bibinitperiod},
+           given={Carlos\bibnamedelima E.},
+           giveni={C\bibinitperiod\bibinitdelim E\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {IOS Press}%
+      }
+      \strng{namehash}{7fd2e5244b4c3a991abf11c4f6c38e3d}
+      \strng{fullhash}{7ec679b0c7ee6b55b1c5e740f49faf56}
+      \strng{fullhashraw}{7ec679b0c7ee6b55b1c5e740f49faf56}
+      \strng{bibnamehash}{7fd2e5244b4c3a991abf11c4f6c38e3d}
+      \strng{authorbibnamehash}{7fd2e5244b4c3a991abf11c4f6c38e3d}
+      \strng{authornamehash}{7fd2e5244b4c3a991abf11c4f6c38e3d}
+      \strng{authorfullhash}{7ec679b0c7ee6b55b1c5e740f49faf56}
+      \strng{authorfullhashraw}{7ec679b0c7ee6b55b1c5e740f49faf56}
+      \field{sortinit}{7}
+      \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{New Trends in Intelligent Software Methodologies, Tools and Techniques}
+      \field{langid}{american}
+      \field{series}{Frontiers in Artificial Intelligence and Applications}
+      \field{title}{Eficiency of {REST} and {gRPC} Realizing Communication Tasks in Microservice-Based Ecosystems}
+      \field{volume}{355}
+      \field{year}{2022}
+      \field{dateera}{ce}
+      \field{pages}{97\bibrangedash 108}
+      \range{pages}{12}
+      \verb{doi}
+      \verb 10.3233/FAIA220242
+      \endverb
+    \endentry
+    \entry{grpc_estados}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=12acd14e73603d7c8860624f02021b15}{%
+           family={{gRPC}},
+           familyi={g\bibinitperiod}}}%
+      }
+      \strng{namehash}{12acd14e73603d7c8860624f02021b15}
+      \strng{fullhash}{12acd14e73603d7c8860624f02021b15}
+      \strng{fullhashraw}{12acd14e73603d7c8860624f02021b15}
+      \strng{bibnamehash}{12acd14e73603d7c8860624f02021b15}
+      \strng{authorbibnamehash}{12acd14e73603d7c8860624f02021b15}
+      \strng{authornamehash}{12acd14e73603d7c8860624f02021b15}
+      \strng{authorfullhash}{12acd14e73603d7c8860624f02021b15}
+      \strng{authorfullhashraw}{12acd14e73603d7c8860624f02021b15}
+      \field{extraname}{2}
+      \field{sortinit}{8}
+      \field{sortinithash}{a231b008ebf0ecbe0b4d96dcc159445f}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{langid}{american}
+      \field{title}{Status Codes}
+      \field{urlday}{20}
+      \field{urlmonth}{11}
+      \field{urlyear}{2026}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://grpc.io/docs/guides/status-codes/
+      \endverb
+      \verb{url}
+      \verb https://grpc.io/docs/guides/status-codes/
+      \endverb
+    \endentry
+    \entry{vansteen2023}{book}{}{}
+      \name{author}{2}{}{%
+        {{hash=7ef720d0b57800861b86b5ce45425837}{%
+           family={Steen},
+           familyi={S\bibinitperiod},
+           given={Maarten},
+           giveni={M\bibinitperiod},
+           prefix={van},
+           prefixi={v\bibinitperiod}}}%
+        {{hash=2414455c999bc471f803cd14fdea939d}{%
+           family={Tanenbaum},
+           familyi={T\bibinitperiod},
+           given={Andrew\bibnamedelima S.},
+           giveni={A\bibinitperiod\bibinitdelim S\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {distributed-systems.net}%
+      }
+      \strng{namehash}{b0f07de745346f2f323b551444bfd1ca}
+      \strng{fullhash}{b0f07de745346f2f323b551444bfd1ca}
+      \strng{fullhashraw}{b0f07de745346f2f323b551444bfd1ca}
+      \strng{bibnamehash}{b0f07de745346f2f323b551444bfd1ca}
+      \strng{authorbibnamehash}{b0f07de745346f2f323b551444bfd1ca}
+      \strng{authornamehash}{b0f07de745346f2f323b551444bfd1ca}
+      \strng{authorfullhash}{b0f07de745346f2f323b551444bfd1ca}
+      \strng{authorfullhashraw}{b0f07de745346f2f323b551444bfd1ca}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{edition}{4}
+      \field{langid}{american}
+      \field{title}{Distributed Systems}
+      \field{urlday}{20}
+      \field{urlmonth}{11}
+      \field{urlyear}{2026}
+      \field{year}{2023}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.distributed-systems.net/index.php/books/ds4/
+      \endverb
+      \verb{url}
+      \verb https://www.distributed-systems.net/index.php/books/ds4/
+      \endverb
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+
