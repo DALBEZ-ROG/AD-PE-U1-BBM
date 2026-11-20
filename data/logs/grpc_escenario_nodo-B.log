@@ -1,0 +1,24 @@
+gRPC | nodo-B | usuario: dbeni | equipo: DALBEZ-ROG-PC | 2026-11-20 15:32:56
+[nodo-B] servidor gRPC en 127.0.0.1:5001 (servidor de aplicación)
+[nodo-B] los tres nodos están en marcha: empiezan los 20 intercambios
+[nodo-B] recibe de nodo-A | reloj 2 (llegó con 1) | Consultar vuelos UIO-GYE para el 15/12
+[nodo-B] recibe de nodo-C | reloj 3 (llegó con 1) | Servicio de pagos disponible
+[nodo-B] envía a nodo-A | reloj 4 | Hay 3 vuelos: 07:00, 12:30 y 18:45
+[nodo-B] recibe de nodo-A | reloj 7 (llegó con 6) | Reservar asiento 12A en el vuelo de las 07:00
+[nodo-B] envía a nodo-C | reloj 8 | Cobrar 85,50 USD con el token tok_4821
+[nodo-B] recibe de nodo-C | reloj 11 (llegó con 10) | Pago aprobado: transacción TX-1001
+[nodo-B] envía a nodo-A | reloj 12 | Reserva confirmada: código RSV-7F3K
+[nodo-B] recibe de nodo-A | reloj 15 (llegó con 14) | Consultar el estado de RSV-7F3K
+[nodo-B] envía a nodo-A | reloj 16 | RSV-7F3K está CONFIRMADA
+[nodo-B] recibe de nodo-A | reloj 19 (llegó con 18) | Agregar una maleta de 23 kg a RSV-7F3K
+[nodo-B] envía a nodo-C | reloj 20 | Cobrar 30,00 USD de equipaje con tok_4821
+[nodo-B] recibe de nodo-C | reloj 23 (llegó con 22) | Pago rechazado: fondos insuficientes
+[nodo-B] envía a nodo-A | reloj 24 | No se pudo cobrar el equipaje
+[nodo-B] recibe de nodo-A | reloj 27 (llegó con 26) | Reintentar el cobro con la tarjeta tok_9930
+[nodo-B] envía a nodo-C | reloj 28 | Cobrar 30,00 USD de equipaje con tok_9930
+[nodo-B] recibe de nodo-C | reloj 31 (llegó con 30) | Pago aprobado: transacción TX-1002
+[nodo-B] envía a nodo-A | reloj 32 | Equipaje agregado a RSV-7F3K
+[nodo-B] recibe de nodo-A | reloj 35 (llegó con 34) | Solicitar los comprobantes de pago
+[nodo-B] envía a nodo-C | reloj 36 | Generar comprobantes de TX-1001 y TX-1002
+[nodo-B] recibe de nodo-C | reloj 39 (llegó con 38) | Comprobantes generados y enviados al correo
+[nodo-B] terminado: 9 envíos, 11 recepciones, 20 eventos en eventos_grpc_nodo-B.csv

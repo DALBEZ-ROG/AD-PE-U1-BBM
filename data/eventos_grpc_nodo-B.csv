@@ -1,0 +1,21 @@
+mecanismo,nodo,evento,reloj,hora_real,origen,destino,reloj_mensaje,mensaje
+grpc,nodo-B,recepcion,2,2026-11-20T15:32:56.143742,nodo-A,nodo-B,1,Consultar vuelos UIO-GYE para el 15/12
+grpc,nodo-B,recepcion,3,2026-11-20T15:32:56.143742,nodo-C,nodo-B,1,Servicio de pagos disponible
+grpc,nodo-B,envio,4,2026-11-20T15:32:56.143742,nodo-B,nodo-A,4,"Hay 3 vuelos: 07:00, 12:30 y 18:45"
+grpc,nodo-B,recepcion,7,2026-11-20T15:32:56.144741,nodo-A,nodo-B,6,Reservar asiento 12A en el vuelo de las 07:00
+grpc,nodo-B,envio,8,2026-11-20T15:32:56.144741,nodo-B,nodo-C,8,"Cobrar 85,50 USD con el token tok_4821"
+grpc,nodo-B,recepcion,11,2026-11-20T15:32:56.145742,nodo-C,nodo-B,10,Pago aprobado: transacción TX-1001
+grpc,nodo-B,envio,12,2026-11-20T15:32:56.145742,nodo-B,nodo-A,12,Reserva confirmada: código RSV-7F3K
+grpc,nodo-B,recepcion,15,2026-11-20T15:32:56.146889,nodo-A,nodo-B,14,Consultar el estado de RSV-7F3K
+grpc,nodo-B,envio,16,2026-11-20T15:32:56.146889,nodo-B,nodo-A,16,RSV-7F3K está CONFIRMADA
+grpc,nodo-B,recepcion,19,2026-11-20T15:32:56.146889,nodo-A,nodo-B,18,Agregar una maleta de 23 kg a RSV-7F3K
+grpc,nodo-B,envio,20,2026-11-20T15:32:56.146889,nodo-B,nodo-C,20,"Cobrar 30,00 USD de equipaje con tok_4821"
+grpc,nodo-B,recepcion,23,2026-11-20T15:32:56.146889,nodo-C,nodo-B,22,Pago rechazado: fondos insuficientes
+grpc,nodo-B,envio,24,2026-11-20T15:32:56.146889,nodo-B,nodo-A,24,No se pudo cobrar el equipaje
+grpc,nodo-B,recepcion,27,2026-11-20T15:32:56.148534,nodo-A,nodo-B,26,Reintentar el cobro con la tarjeta tok_9930
+grpc,nodo-B,envio,28,2026-11-20T15:32:56.148534,nodo-B,nodo-C,28,"Cobrar 30,00 USD de equipaje con tok_9930"
+grpc,nodo-B,recepcion,31,2026-11-20T15:32:56.148534,nodo-C,nodo-B,30,Pago aprobado: transacción TX-1002
+grpc,nodo-B,envio,32,2026-11-20T15:32:56.149046,nodo-B,nodo-A,32,Equipaje agregado a RSV-7F3K
+grpc,nodo-B,recepcion,35,2026-11-20T15:32:56.149046,nodo-A,nodo-B,34,Solicitar los comprobantes de pago
+grpc,nodo-B,envio,36,2026-11-20T15:32:56.149046,nodo-B,nodo-C,36,Generar comprobantes de TX-1001 y TX-1002
+grpc,nodo-B,recepcion,39,2026-11-20T15:32:56.149046,nodo-C,nodo-B,38,Comprobantes generados y enviados al correo

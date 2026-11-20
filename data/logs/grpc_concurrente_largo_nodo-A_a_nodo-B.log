@@ -1,0 +1,7 @@
+Latencia con gRPC | nodo-A -> nodo-B | usuario: dbeni | equipo: DALBEZ-ROG-PC | 2026-11-20 15:33:03
+[nodo-A -> nodo-B] grpc largo calentamiento: 100 envíos, promedio 0.382 ms, 2570.0 mensajes/s
+[nodo-A -> nodo-B] grpc largo corrida 1: 100 envíos, promedio 0.308 ms, 3171.1 mensajes/s
+[nodo-A -> nodo-B] grpc largo corrida 2: 100 envíos, promedio 0.282 ms, 3456.6 mensajes/s
+[nodo-A -> nodo-B] grpc largo corrida 3: 100 envíos, promedio 0.286 ms, 3414.0 mensajes/s
+[nodo-A -> nodo-B] grpc largo corrida 4: 100 envíos, promedio 0.280 ms, 3477.1 mensajes/s
+[nodo-A -> nodo-B] grpc largo corrida 5: 100 envíos, promedio 0.282 ms, 3454.4 mensajes/s

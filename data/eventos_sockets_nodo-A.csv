@@ -1,0 +1,12 @@
+mecanismo,nodo,evento,reloj,hora_real,origen,destino,reloj_mensaje,mensaje
+sockets,nodo-A,envio,1,2026-11-20T15:32:44.385140,nodo-A,nodo-B,1,Consultar vuelos UIO-GYE para el 15/12
+sockets,nodo-A,recepcion,4,2026-11-20T15:32:44.386139,nodo-B,nodo-A,3,"Hay 3 vuelos: 07:00, 12:30 y 18:45"
+sockets,nodo-A,envio,5,2026-11-20T15:32:44.386139,nodo-A,nodo-B,5,Reservar asiento 12A en el vuelo de las 07:00
+sockets,nodo-A,recepcion,12,2026-11-20T15:32:44.386139,nodo-B,nodo-A,11,Reserva confirmada: código RSV-7F3K
+sockets,nodo-A,envio,13,2026-11-20T15:32:44.386139,nodo-A,nodo-B,13,Consultar el estado de RSV-7F3K
+sockets,nodo-A,recepcion,16,2026-11-20T15:32:44.386139,nodo-B,nodo-A,15,RSV-7F3K está CONFIRMADA
+sockets,nodo-A,envio,17,2026-11-20T15:32:44.386139,nodo-A,nodo-B,17,Agregar una maleta de 23 kg a RSV-7F3K
+sockets,nodo-A,recepcion,24,2026-11-20T15:32:44.387771,nodo-B,nodo-A,23,No se pudo cobrar el equipaje
+sockets,nodo-A,envio,25,2026-11-20T15:32:44.387771,nodo-A,nodo-B,25,Reintentar el cobro con la tarjeta tok_9930
+sockets,nodo-A,recepcion,32,2026-11-20T15:32:44.387771,nodo-B,nodo-A,31,Equipaje agregado a RSV-7F3K
+sockets,nodo-A,envio,33,2026-11-20T15:32:44.387771,nodo-A,nodo-B,33,Solicitar los comprobantes de pago

@@ -1,0 +1,21 @@
+mecanismo,nodo,evento,reloj,hora_real,origen,destino,reloj_mensaje,mensaje
+sockets,nodo-B,recepcion,2,2026-11-20T15:32:44.385140,nodo-A,nodo-B,1,Consultar vuelos UIO-GYE para el 15/12
+sockets,nodo-B,envio,3,2026-11-20T15:32:44.386139,nodo-B,nodo-A,3,"Hay 3 vuelos: 07:00, 12:30 y 18:45"
+sockets,nodo-B,recepcion,6,2026-11-20T15:32:44.386139,nodo-A,nodo-B,5,Reservar asiento 12A en el vuelo de las 07:00
+sockets,nodo-B,envio,7,2026-11-20T15:32:44.386139,nodo-B,nodo-C,7,"Cobrar 85,50 USD con el token tok_4821"
+sockets,nodo-B,recepcion,10,2026-11-20T15:32:44.386139,nodo-C,nodo-B,9,Pago aprobado: transacción TX-1001
+sockets,nodo-B,envio,11,2026-11-20T15:32:44.386139,nodo-B,nodo-A,11,Reserva confirmada: código RSV-7F3K
+sockets,nodo-B,recepcion,12,2026-11-20T15:32:44.386139,nodo-C,nodo-B,10,Servicio de pagos disponible
+sockets,nodo-B,recepcion,14,2026-11-20T15:32:44.386139,nodo-A,nodo-B,13,Consultar el estado de RSV-7F3K
+sockets,nodo-B,envio,15,2026-11-20T15:32:44.386139,nodo-B,nodo-A,15,RSV-7F3K está CONFIRMADA
+sockets,nodo-B,recepcion,18,2026-11-20T15:32:44.386139,nodo-A,nodo-B,17,Agregar una maleta de 23 kg a RSV-7F3K
+sockets,nodo-B,envio,19,2026-11-20T15:32:44.386139,nodo-B,nodo-C,19,"Cobrar 30,00 USD de equipaje con tok_4821"
+sockets,nodo-B,recepcion,22,2026-11-20T15:32:44.387771,nodo-C,nodo-B,21,Pago rechazado: fondos insuficientes
+sockets,nodo-B,envio,23,2026-11-20T15:32:44.387771,nodo-B,nodo-A,23,No se pudo cobrar el equipaje
+sockets,nodo-B,recepcion,26,2026-11-20T15:32:44.387771,nodo-A,nodo-B,25,Reintentar el cobro con la tarjeta tok_9930
+sockets,nodo-B,envio,27,2026-11-20T15:32:44.387771,nodo-B,nodo-C,27,"Cobrar 30,00 USD de equipaje con tok_9930"
+sockets,nodo-B,recepcion,30,2026-11-20T15:32:44.387771,nodo-C,nodo-B,29,Pago aprobado: transacción TX-1002
+sockets,nodo-B,envio,31,2026-11-20T15:32:44.387771,nodo-B,nodo-A,31,Equipaje agregado a RSV-7F3K
+sockets,nodo-B,recepcion,34,2026-11-20T15:32:44.387771,nodo-A,nodo-B,33,Solicitar los comprobantes de pago
+sockets,nodo-B,envio,35,2026-11-20T15:32:44.387771,nodo-B,nodo-C,35,Generar comprobantes de TX-1001 y TX-1002
+sockets,nodo-B,recepcion,38,2026-11-20T15:32:44.387771,nodo-C,nodo-B,37,Comprobantes generados y enviados al correo

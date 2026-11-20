@@ -1,0 +1,3 @@
+gRPC | nodo-B | usuario: dbeni | equipo: DALBEZ-ROG-PC | 2026-11-20 15:32:57
+[nodo-B] servidor gRPC en 127.0.0.1:5001 (servidor de aplicación)
+[nodo-B] modo receptor: responde acuses para medir latencia (Ctrl+C para salir)

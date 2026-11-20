@@ -1,0 +1,13 @@
+Sockets TCP | nodo-C | usuario: dbeni | equipo: DALBEZ-ROG-PC | 2026-11-20 15:32:44
+[nodo-C] escuchando en 127.0.0.1:5002 (servicio de pagos)
+[nodo-C] recibe de nodo-B | reloj 8 (llegó con 7) | Cobrar 85,50 USD con el token tok_4821
+[nodo-C] los tres nodos están en marcha: empiezan los 20 intercambios
+[nodo-C] envía a nodo-B | reloj 9 | Pago aprobado: transacción TX-1001
+[nodo-C] envía a nodo-B | reloj 10 | Servicio de pagos disponible
+[nodo-C] recibe de nodo-B | reloj 20 (llegó con 19) | Cobrar 30,00 USD de equipaje con tok_4821
+[nodo-C] envía a nodo-B | reloj 21 | Pago rechazado: fondos insuficientes
+[nodo-C] recibe de nodo-B | reloj 28 (llegó con 27) | Cobrar 30,00 USD de equipaje con tok_9930
+[nodo-C] envía a nodo-B | reloj 29 | Pago aprobado: transacción TX-1002
+[nodo-C] recibe de nodo-B | reloj 36 (llegó con 35) | Generar comprobantes de TX-1001 y TX-1002
+[nodo-C] envía a nodo-B | reloj 37 | Comprobantes generados y enviados al correo
+[nodo-C] terminado: 5 envíos, 4 recepciones, 9 eventos en eventos_sockets_nodo-C.csv

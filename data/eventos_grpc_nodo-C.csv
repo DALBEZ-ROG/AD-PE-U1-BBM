@@ -1,0 +1,10 @@
+mecanismo,nodo,evento,reloj,hora_real,origen,destino,reloj_mensaje,mensaje
+grpc,nodo-C,envio,1,2026-11-20T15:32:56.142738,nodo-C,nodo-B,1,Servicio de pagos disponible
+grpc,nodo-C,recepcion,9,2026-11-20T15:32:56.145742,nodo-B,nodo-C,8,"Cobrar 85,50 USD con el token tok_4821"
+grpc,nodo-C,envio,10,2026-11-20T15:32:56.145742,nodo-C,nodo-B,10,Pago aprobado: transacción TX-1001
+grpc,nodo-C,recepcion,21,2026-11-20T15:32:56.146889,nodo-B,nodo-C,20,"Cobrar 30,00 USD de equipaje con tok_4821"
+grpc,nodo-C,envio,22,2026-11-20T15:32:56.146889,nodo-C,nodo-B,22,Pago rechazado: fondos insuficientes
+grpc,nodo-C,recepcion,29,2026-11-20T15:32:56.148534,nodo-B,nodo-C,28,"Cobrar 30,00 USD de equipaje con tok_9930"
+grpc,nodo-C,envio,30,2026-11-20T15:32:56.148534,nodo-C,nodo-B,30,Pago aprobado: transacción TX-1002
+grpc,nodo-C,recepcion,37,2026-11-20T15:32:56.149046,nodo-B,nodo-C,36,Generar comprobantes de TX-1001 y TX-1002
+grpc,nodo-C,envio,38,2026-11-20T15:32:56.149046,nodo-C,nodo-B,38,Comprobantes generados y enviados al correo

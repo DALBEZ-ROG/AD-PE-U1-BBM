@@ -1,0 +1,55 @@
+{
+  "fecha_inicio": "2026-11-20T15:32:44",
+  "usuario": "dbeni",
+  "equipo": "DALBEZ-ROG-PC",
+  "sistema_operativo": "Windows 11 Professional (versión 10.0.26300)",
+  "procesador": "13th Gen Intel(R) Core(TM) i7-13700F",
+  "nucleos_logicos": 24,
+  "memoria_total_gb": 31.8,
+  "memoria_disponible_al_inicio_gb": 16.4,
+  "plan_de_energia": "Alto rendimiento",
+  "python": "CPython 3.12.10",
+  "librerias": {
+    "grpcio": "1.85.3",
+    "grpcio-tools": "1.85.3",
+    "protobuf": "7.36.2",
+    "pandas": "3.1.1",
+    "numpy": "2.5.5",
+    "matplotlib": "3.11.2"
+  },
+  "despliegue": "procesos en la misma máquina (127.0.0.1, puertos 5000, 5001 y 5002), sin contenedores",
+  "protocolo": {
+    "mecanismos": [
+      "sockets",
+      "grpc"
+    ],
+    "envios_por_corrida": 100,
+    "corridas": 5,
+    "corridas_de_calentamiento": 1,
+    "tamanos_en_caracteres": {
+      "corto": 100,
+      "largo": 10000
+    },
+    "latencia": "nodo-A -> nodo-B",
+    "concurrencia": [
+      "nodo-A -> nodo-B",
+      "nodo-B -> nodo-C",
+      "nodo-C -> nodo-B"
+    ]
+  },
+  "bytes_por_mensaje": {
+    "corto": {
+      "caracteres": 100,
+      "sockets_json_con_cabecera": 155,
+      "grpc_protobuf": 112
+    },
+    "largo": {
+      "caracteres": 10000,
+      "sockets_json_con_cabecera": 10055,
+      "grpc_protobuf": 10013
+    }
+  },
+  "notas": "Corrida oficial ejecutada por Claude (Claude Code) en la PC de Dariem Benites, a su pedido, luego de corregir la escritura de los CSV en la prueba de concurrencia. Los otros programas abiertos no se cerraron.",
+  "fecha_fin": "2026-11-20T15:33:08",
+  "duracion_s": 24.1
+}

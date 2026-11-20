@@ -1,0 +1,15 @@
+Sockets TCP | nodo-A | usuario: dbeni | equipo: DALBEZ-ROG-PC | 2026-11-20 15:32:44
+[nodo-A] escuchando en 127.0.0.1:5000 (cliente de reservas)
+[nodo-A] los tres nodos están en marcha: empiezan los 20 intercambios
+[nodo-A] envía a nodo-B | reloj 1 | Consultar vuelos UIO-GYE para el 15/12
+[nodo-A] recibe de nodo-B | reloj 4 (llegó con 3) | Hay 3 vuelos: 07:00, 12:30 y 18:45
+[nodo-A] envía a nodo-B | reloj 5 | Reservar asiento 12A en el vuelo de las 07:00
+[nodo-A] recibe de nodo-B | reloj 12 (llegó con 11) | Reserva confirmada: código RSV-7F3K
+[nodo-A] envía a nodo-B | reloj 13 | Consultar el estado de RSV-7F3K
+[nodo-A] recibe de nodo-B | reloj 16 (llegó con 15) | RSV-7F3K está CONFIRMADA
+[nodo-A] envía a nodo-B | reloj 17 | Agregar una maleta de 23 kg a RSV-7F3K
+[nodo-A] recibe de nodo-B | reloj 24 (llegó con 23) | No se pudo cobrar el equipaje
+[nodo-A] envía a nodo-B | reloj 25 | Reintentar el cobro con la tarjeta tok_9930
+[nodo-A] recibe de nodo-B | reloj 32 (llegó con 31) | Equipaje agregado a RSV-7F3K
+[nodo-A] envía a nodo-B | reloj 33 | Solicitar los comprobantes de pago
+[nodo-A] terminado: 6 envíos, 5 recepciones, 11 eventos en eventos_sockets_nodo-A.csv

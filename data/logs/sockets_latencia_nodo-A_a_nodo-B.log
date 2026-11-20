@@ -1,0 +1,13 @@
+Latencia con sockets TCP | nodo-A -> nodo-B | usuario: dbeni | equipo: DALBEZ-ROG-PC | 2026-11-20 15:32:45
+[nodo-A -> nodo-B] sockets corto calentamiento: 100 envíos, promedio 0.033 ms, 27417.5 mensajes/s
+[nodo-A -> nodo-B] sockets corto corrida 1: 100 envíos, promedio 0.030 ms, 30353.6 mensajes/s
+[nodo-A -> nodo-B] sockets corto corrida 2: 100 envíos, promedio 0.029 ms, 31239.3 mensajes/s
+[nodo-A -> nodo-B] sockets corto corrida 3: 100 envíos, promedio 0.029 ms, 31005.8 mensajes/s
+[nodo-A -> nodo-B] sockets corto corrida 4: 100 envíos, promedio 0.032 ms, 28568.2 mensajes/s
+[nodo-A -> nodo-B] sockets corto corrida 5: 100 envíos, promedio 0.031 ms, 29229.5 mensajes/s
+[nodo-A -> nodo-B] sockets largo calentamiento: 100 envíos, promedio 0.062 ms, 15378.0 mensajes/s
+[nodo-A -> nodo-B] sockets largo corrida 1: 100 envíos, promedio 0.059 ms, 16171.3 mensajes/s
+[nodo-A -> nodo-B] sockets largo corrida 2: 100 envíos, promedio 0.061 ms, 15638.9 mensajes/s
+[nodo-A -> nodo-B] sockets largo corrida 3: 100 envíos, promedio 0.059 ms, 15981.3 mensajes/s
+[nodo-A -> nodo-B] sockets largo corrida 4: 100 envíos, promedio 0.059 ms, 16033.9 mensajes/s
+[nodo-A -> nodo-B] sockets largo corrida 5: 100 envíos, promedio 0.057 ms, 16597.0 mensajes/s
