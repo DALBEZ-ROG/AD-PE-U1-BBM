@@ -1,0 +1,15 @@
+Verificación del reloj de Lamport | Sockets TCP | 2026-11-20 15:33:19
+Datos: eventos_sockets_nodo-A.csv, eventos_sockets_nodo-B.csv, eventos_sockets_nodo-C.csv
+Eventos: 40 (20 envíos y 20 recepciones) en 3 nodos
+1. Reglas del reloj en cada nodo (envío: local + 1; recepción: max(local, recibido) + 1): se cumplen en todos los eventos
+2. Mensajes emparejados: 20 de 20 recepciones tienen su envío; en todas, el reloj al recibir es mayor que el reloj al enviar (diferencia de 1 a 2)
+3. Pares de eventos ordenados por «sucedió antes»: 774; en todos C(a) < C(b)
+Pares concurrentes (ninguno sucedió antes que el otro): 6; con el mismo valor de reloj: 2
+   - nodo-A, recepción desde nodo-B, reloj 12: «Reserva confirmada: código RSV-7F3K»
+     nodo-B, recepción desde nodo-C, reloj 12: «Servicio de pagos disponible»
+   - nodo-B, recepción desde nodo-C, reloj 10: «Pago aprobado: transacción TX-1001»
+     nodo-C, envío a nodo-B, reloj 10: «Servicio de pagos disponible»
+Concurrentes con relojes distintos: 4. Por ejemplo:
+   - nodo-A, recepción desde nodo-B, reloj 12: «Reserva confirmada: código RSV-7F3K»
+     nodo-C, envío a nodo-B, reloj 10: «Servicio de pagos disponible»
+Resultado: CORRECTO

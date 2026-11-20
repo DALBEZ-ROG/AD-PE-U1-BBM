@@ -1,0 +1,28 @@
+% Generado por analysis/verificar_lamport.py a partir de data/. No editar a mano.
+\begin{tabular}{rlrrp{0.42\linewidth}}
+\toprule
+ & & Reloj al & Reloj al & \\
+Paso & Emisor $\rightarrow$ receptor & enviar & recibir & Contenido del mensaje \\
+\midrule
+1 & nodo-A $\rightarrow$ nodo-B & 1 & 2 & Consultar vuelos UIO-GYE para el 15/12 \\
+2 & nodo-C $\rightarrow$ nodo-B & 10$^{*}$ & 12 & Servicio de pagos disponible \\
+3 & nodo-B $\rightarrow$ nodo-A & 3 & 4 & Hay 3 vuelos: 07:00, 12:30 y 18:45 \\
+4 & nodo-A $\rightarrow$ nodo-B & 5 & 6 & Reservar asiento 12A en el vuelo de las 07:00 \\
+5 & nodo-B $\rightarrow$ nodo-C & 7 & 8 & Cobrar 85,50 USD con el token tok\_4821 \\
+6 & nodo-C $\rightarrow$ nodo-B & 9 & 10 & Pago aprobado: transacción TX-1001 \\
+7 & nodo-B $\rightarrow$ nodo-A & 11 & 12 & Reserva confirmada: código RSV-7F3K \\
+8 & nodo-A $\rightarrow$ nodo-B & 13 & 14 & Consultar el estado de RSV-7F3K \\
+9 & nodo-B $\rightarrow$ nodo-A & 15 & 16 & RSV-7F3K está CONFIRMADA \\
+10 & nodo-A $\rightarrow$ nodo-B & 17 & 18 & Agregar una maleta de 23 kg a RSV-7F3K \\
+11 & nodo-B $\rightarrow$ nodo-C & 19 & 20 & Cobrar 30,00 USD de equipaje con tok\_4821 \\
+12 & nodo-C $\rightarrow$ nodo-B & 21 & 22 & Pago rechazado: fondos insuficientes \\
+13 & nodo-B $\rightarrow$ nodo-A & 23 & 24 & No se pudo cobrar el equipaje \\
+14 & nodo-A $\rightarrow$ nodo-B & 25 & 26 & Reintentar el cobro con la tarjeta tok\_9930 \\
+15 & nodo-B $\rightarrow$ nodo-C & 27 & 28 & Cobrar 30,00 USD de equipaje con tok\_9930 \\
+16 & nodo-C $\rightarrow$ nodo-B & 29 & 30 & Pago aprobado: transacción TX-1002 \\
+17 & nodo-B $\rightarrow$ nodo-A & 31 & 32 & Equipaje agregado a RSV-7F3K \\
+18 & nodo-A $\rightarrow$ nodo-B & 33 & 34 & Solicitar los comprobantes de pago \\
+19 & nodo-B $\rightarrow$ nodo-C & 35 & 36 & Generar comprobantes de TX-1001 y TX-1002 \\
+20 & nodo-C $\rightarrow$ nodo-B & 37 & 38 & Comprobantes generados y enviados al correo \\
+\bottomrule
+\end{tabular}

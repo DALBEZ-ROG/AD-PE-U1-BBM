@@ -1,0 +1,13 @@
+Verificación del reloj de Lamport | gRPC | 2026-11-20 15:33:20
+Datos: eventos_grpc_nodo-A.csv, eventos_grpc_nodo-B.csv, eventos_grpc_nodo-C.csv
+Eventos: 40 (20 envíos y 20 recepciones) en 3 nodos
+1. Reglas del reloj en cada nodo (envío: local + 1; recepción: max(local, recibido) + 1): se cumplen en todos los eventos
+2. Mensajes emparejados: 20 de 20 recepciones tienen su envío; en todas, el reloj al recibir es mayor que el reloj al enviar (diferencia de 1 a 2)
+3. Pares de eventos ordenados por «sucedió antes»: 778; en todos C(a) < C(b)
+Pares concurrentes (ninguno sucedió antes que el otro): 2; con el mismo valor de reloj: 1
+   - nodo-A, envío a nodo-B, reloj 1: «Consultar vuelos UIO-GYE para el 15/12»
+     nodo-C, envío a nodo-B, reloj 1: «Servicio de pagos disponible»
+Concurrentes con relojes distintos: 1. Por ejemplo:
+   - nodo-B, recepción desde nodo-A, reloj 2: «Consultar vuelos UIO-GYE para el 15/12»
+     nodo-C, envío a nodo-B, reloj 1: «Servicio de pagos disponible»
+Resultado: CORRECTO

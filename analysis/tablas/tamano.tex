@@ -1,0 +1,13 @@
+% Generado por analysis/analizar.py a partir de data/. No editar a mano.
+\begin{tabular}{lrrrrr}
+\toprule
+ & & \multicolumn{3}{c}{Latencia media (ms)} & Mensajes/s \\
+\cmidrule(lr){3-5}
+Mecanismo & Clientes & 100 caracteres & 10\,000 caracteres & Cambio & cambio \\
+\midrule
+Sockets TCP & 1 & 0,030 & 0,059 & +96,2\,\% & $-$46,5\,\% \\
+Sockets TCP & 3 & 0,037 & 0,069 & +85,5\,\% & $-$43,1\,\% \\
+gRPC & 1 & 0,231 & 0,250 & +7,9\,\% & $-$7,1\,\% \\
+gRPC & 3 & 0,265 & 0,275 & +3,5\,\% & $-$3,4\,\% \\
+\bottomrule
+\end{tabular}
