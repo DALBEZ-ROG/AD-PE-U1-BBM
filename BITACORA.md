@@ -24,3 +24,17 @@
   - **Tres clientes a la vez (A → B, B → C y C → B):** la latencia de cada cliente subirá, porque los procesos compiten por la CPU y porque nodo-B recibe de A y de C al mismo tiempo. El total de mensajes por segundo de los tres será mayor que con un solo cliente, pero no el triple, porque nodo-B se vuelve el cuello de botella.
 - **Qué hicimos:**
   - Se acordó la hipótesis entre los tres antes de correr el experimento oficial.
+
+
+## Viernes 20 de noviembre de 2026
+
+- **Presentes:** Elian Mendoza.
+- **Qué hicimos:**
+  - Se instaló Python 3.12.10 con el nuevo Python install manager (`py install 3.12`) y las librerías de `requirements.txt`.
+  - Se generó el código de gRPC (`mensajeria_pb2.py` y `mensajeria_pb2_grpc.py`) a partir de `proto/mensajeria.proto` con `grpc_tools.protoc`.
+  - Se subió el archivo `.proto` con el servicio `Mensajeria`, el mensaje `Mensaje` (mismos campos que el JSON de sockets) y el `Acuse`.
+  - Se subieron `src/grpc/__init__.py` y `generar_codigo.bat`.
+- **Problemas resueltos:**
+  - El instalador nuevo de Python avisó que seguía instalado el "Python Launcher" antiguo, y por eso `py install` no funcionaba. Se desinstaló el Python Launcher desde Aplicaciones instaladas y el comando nuevo `py` empezó a funcionar.
+  - El instalador puso Python 3.15 por defecto. Para usar la misma versión que el equipo se instaló la 3.12 y los comandos se ejecutan con `py -3.12`.
+  - `pip install` se cortó con `Read timed out` por internet lento. Se repitió con `--default-timeout=120 --retries 10` y terminó bien.
