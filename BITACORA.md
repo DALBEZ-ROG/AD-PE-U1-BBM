@@ -47,3 +47,15 @@
   - Se probaron en la computadora de Elian los tres nodos con gRPC (20 intercambios, 40 eventos) y la medición de latencia, y se tomaron las capturas 03 y 04.
 - **Problemas resueltos:**
   - Al ejecutar los nodos salió `No module named 'src'`, porque la consola estaba en la carpeta externa del ZIP. Se entró a la carpeta interna con `cd AD-PE-U1-BBM-main` y los nodos corrieron bien.
+
+## Viernes 20 de noviembre de 2026 (segunda sesión)
+
+- **Presentes:** Dariem Benites.
+- **Qué hicimos:**
+  - Se revisó que el código de sockets de Erwin y el de gRPC de Elian estuvieran completos en el repositorio, y se probaron juntos con el script del experimento.
+  - Se corrió el experimento oficial en la computadora de Dariem: 1 corrida de calentamiento y 5 de 100 envíos, con 100 y 10 000 caracteres, con uno y con tres clientes, para sockets y para gRPC.
+  - Se corrieron `analysis/analizar.py` y `analysis/verificar_lamport.py`, y se tomaron las capturas 05a a 07.
+  - Se agregó al análisis una tabla de la prueba de concurrencia separada por cliente.
+  - Se escribió el informe en `docs/` con los resultados.
+- **Problemas resueltos:**
+  - La primera corrida oficial dejó 9 294 filas de latencia en lugar de 9 600. En la prueba de concurrencia los tres clientes escribían el mismo CSV a la vez y unas filas pisaban a otras. Se corrigió `src/comun/registro.py` para que cada proceso espere su turno con un archivo `.turno`, se probó con dos corridas completas y se repitió el experimento oficial. La primera corrida se descartó.
