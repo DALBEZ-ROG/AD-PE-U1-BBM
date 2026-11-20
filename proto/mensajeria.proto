@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package mensajeria;
+
+// Mismos campos que el JSON de sockets: quién envía, su reloj de Lamport y el texto.
+message Mensaje {
+  string sender = 1;
+  int64 timestamp = 2;
+  string message = 3;
+}
+
+// Respuesta del nodo que recibe: su nombre y su reloj después de recibir.
+message Acuse {
+  string receptor = 1;
+  int64 timestamp = 2;
+  bool recibido = 3;
+}
+
+// Servicio que expone cada nodo para que los otros dos le envíen mensajes.
+service Mensajeria {
+  // Recibe un mensaje, actualiza el reloj del receptor y devuelve el acuse.
+  rpc EnviarMensaje (Mensaje) returns (Acuse);
+}
