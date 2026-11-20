@@ -1,6 +1,6 @@
 # PE-U1: comunicación entre procesos con sockets TCP y gRPC
 
-Práctica experimental de la Unidad 1 (GA-SUM-01 / PE-U1) de Aplicaciones Distribuidas (ISR-701), Universidad Técnica Estatal de Quevedo, Carrera de Software, paralelo B. Cierre: domingo 22 de noviembre de 2026, 23:55.
+Práctica experimental de la Unidad 1 (GA-SUM-01 / PE-U1) de Aplicaciones Distribuidas (ISR-701), Universidad Técnica Estatal de Quevedo, Carrera de Software, paralelo B. Cierre: domingo 22 de noviembre de 2026, 23:59.
 
 Tres nodos en la misma máquina se comunican primero con sockets TCP y después con gRPC. Cada nodo lleva un reloj de Lamport. Medimos la latencia y el rendimiento de los dos mecanismos y comprobamos el orden de los eventos con los relojes.
 
@@ -22,7 +22,7 @@ Pendiente.
 | nodo-B | 5001 | servidor de aplicación |
 | nodo-C | 5002 | servicio de pagos |
 
-Los 20 intercambios del escenario están en `src/comun/escenario.py`. Los pasos 1 y 2 salen a la vez desde nodo-A y nodo-C, por eso son eventos concurrentes.
+Los 20 intercambios del escenario están en `src/comun/escenario.py`. Los pasos 1 y 2 no dependen de ningún otro paso: cada uno sale apenas su nodo está listo, así que su orden puede cambiar de una corrida a otra.
 
 ## Carpetas
 
@@ -94,15 +94,19 @@ python analysis\analizar.py
 python analysis\verificar_lamport.py
 ```
 
-`analizar.py` revisa primero `SHA256SUMS`. Luego calcula, sin la corrida de calentamiento, la media, la mediana, la desviación estándar, el percentil 95 y los mensajes por segundo de cada mecanismo y tamaño, y genera las tablas de `analysis/tablas/` y los gráficos de `analysis/figuras/`.
+`analizar.py` revisa primero `SHA256SUMS`. Luego calcula, sin la corrida de calentamiento, la media, la mediana, la desviación estándar, el percentil 95 y los mensajes por segundo de cada mecanismo y tamaño, y genera las tablas de `analysis/tablas/` y los gráficos de `analysis/figuras/`. En la prueba de tres clientes también separa los resultados por cliente.
 
 `verificar_lamport.py` usa los CSV de eventos para comprobar que en los 20 mensajes el reloj al recibir es mayor que al enviar, y busca eventos concurrentes con el mismo valor de reloj.
 
 Para revisar las huellas a mano, en Git Bash dentro de `data/`: `sha256sum -c SHA256SUMS`.
 
+## Resultados
+
+El informe está en [`docs/main.pdf`](docs/main.pdf), con los resultados, la discusión, la verificación de Lamport y la declaración de uso de IA (sección 11). Las capturas de ejecución están en [`docs/capturas/`](docs/capturas/).
+
 ## Compilar el informe
 
-Hace falta MiKTeX o TeX Live con `pdflatex` y `biber`. El archivo principal es `docs/main.tex`. Usa los paquetes `babel` (español), `fontenc`, `lmodern`, `geometry`, `graphicx`, `booktabs`, `float`, `caption`, `listings`, `csquotes`, `biblatex` con el estilo `biblatex-ieee`, `hyperref` y `xurl`.
+Hace falta MiKTeX o TeX Live con `pdflatex` y `biber`. El archivo principal es `docs/main.tex`. Usa los paquetes `inputenc`, `fontenc`, `babel` (español), `geometry`, `lmodern`, `csquotes`, `graphicx`, `xcolor`, `array`, `tabularx`, `booktabs`, `float`, `enumitem`, `caption`, `listings`, `tikz`, `biblatex` con el estilo `biblatex-ieee`, `hyperref` y `xurl`.
 
 ```
 cd docs
