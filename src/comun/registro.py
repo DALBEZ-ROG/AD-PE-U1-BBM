@@ -2,9 +2,11 @@
 
 import csv
 import getpass
+import os
 import platform
 import sys
 import threading
+import time
 from datetime import datetime
 from pathlib import Path
 
@@ -66,13 +68,35 @@ class RegistroEventos:
         return len(filas)
 
 
+def _tomar_turno(ruta_turno, espera_max_s=60):
+    """Crea el archivo de turno en exclusiva; si ya existe, otro proceso está escribiendo y se espera."""
+    inicio = time.monotonic()
+    while True:
+        try:
+            return os.open(ruta_turno, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+        except FileExistsError:
+            if time.monotonic() - inicio > espera_max_s:
+                raise TimeoutError(f"{ruta_turno} sigue ocupado después de {espera_max_s} s")
+            time.sleep(0.01)
+
+
 def agregar_filas(ruta, campos, filas):
-    """Agrega filas a un CSV; escribe el encabezado solo si el archivo es nuevo."""
+    """Agrega filas a un CSV; escribe el encabezado solo si el archivo es nuevo.
+
+    En la prueba de concurrencia tres procesos escriben el mismo CSV al terminar. Si escriben a la
+    vez, las filas se pisan y se pierden, así que cada proceso espera su turno con un archivo .turno.
+    """
     ruta = Path(ruta)
     ruta.parent.mkdir(parents=True, exist_ok=True)
-    nuevo = not ruta.exists()
-    with open(ruta, "a", newline="", encoding="utf-8") as archivo:
-        escritor = csv.DictWriter(archivo, fieldnames=campos)
-        if nuevo:
-            escritor.writeheader()
-        escritor.writerows(filas)
+    turno = ruta.with_name(ruta.name + ".turno")
+    descriptor = _tomar_turno(turno)
+    try:
+        nuevo = not ruta.exists()
+        with open(ruta, "a", newline="", encoding="utf-8") as archivo:
+            escritor = csv.DictWriter(archivo, fieldnames=campos)
+            if nuevo:
+                escritor.writeheader()
+            escritor.writerows(filas)
+    finally:
+        os.close(descriptor)
+        os.remove(turno)
