@@ -59,3 +59,13 @@
   - Se escribió el informe en `docs/` con los resultados.
 - **Problemas resueltos:**
   - La primera corrida oficial dejó 9 294 filas de latencia en lugar de 9 600. En la prueba de concurrencia los tres clientes escribían el mismo CSV a la vez y unas filas pisaban a otras. Se corrigió `src/comun/registro.py` para que cada proceso espere su turno con un archivo `.turno`, se probó con dos corridas completas y se repitió el experimento oficial. La primera corrida se descartó.
+    
+## Viernes 20 de noviembre de 2026 (sesión de Erwin)
+
+- **Presentes:** Erwin Bueno.
+- **Qué hicimos:**
+  - Se probaron en la computadora de Erwin los tres nodos con sockets. Salieron los 20 intercambios, con 40 eventos entre los tres CSV (11 de nodo-A, 20 de nodo-B y 9 de nodo-C). Se tomó la captura 01.
+  - Se midió la latencia de nodo-A a nodo-B con nodo-B en modo receptor. Con 100 caracteres el promedio quedó entre 0,12 y 0,14 ms, y con 10 000 caracteres entre 0,18 y 0,21 ms. Se tomó la captura 02.
+  - Se subió `protocolo.py` junto con `__init__.py`, después `nodo.py` y después `medir_latencia.py`, cada uno en su propio commit. Al final se subieron las capturas 01 y 02 a `docs/capturas/`.
+- **Problemas resueltos:**
+  - Con solo la carpeta `src/sockets/` los nodos no corrían, porque necesitan el código común de `src/comun/` (reloj de Lamport, escenario y registro). Se clonó el repositorio completo y, ejecutando desde la raíz, los nodos funcionaron.
