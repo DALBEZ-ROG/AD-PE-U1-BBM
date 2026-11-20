@@ -26,7 +26,7 @@
   - Se acordó la hipótesis entre los tres antes de correr el experimento oficial.
 
 
-## Viernes 20 de noviembre de 2026
+## Jueves 19 de noviembre de 2026
 
 - **Presentes:** Elian Mendoza.
 - **Qué hicimos:**
@@ -38,3 +38,13 @@
   - El instalador nuevo de Python avisó que seguía instalado el "Python Launcher" antiguo, y por eso `py install` no funcionaba. Se desinstaló el Python Launcher desde Aplicaciones instaladas y el comando nuevo `py` empezó a funcionar.
   - El instalador puso Python 3.15 por defecto. Para usar la misma versión que el equipo se instaló la 3.12 y los comandos se ejecutan con `py -3.12`.
   - `pip install` se cortó con `Read timed out` por internet lento. Se repitió con `--default-timeout=120 --retries 10` y terminó bien.
+ 
+  ## Viernes 20 de noviembre de 2026
+
+- **Presentes:** Elian Mendoza.
+- **Qué hicimos:**
+  - Se subió `nodo.py` con los archivos generados `mensajeria_pb2.py` y `mensajeria_pb2_grpc.py`.
+  - Se subió `medir_latencia.py`.
+  - Se probaron en mi computadora los tres nodos con gRPC (20 intercambios, 40 eventos) y la medición de latencia, y se tomaron las capturas 03 y 04.
+- **Problemas resueltos:**
+  - Al ejecutar los nodos salió `No module named 'src'`, porque la consola estaba en la carpeta externa del ZIP. Se entró a la carpeta interna con `cd AD-PE-U1-BBM-main` y los nodos corrieron bien.
